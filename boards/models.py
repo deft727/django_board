@@ -1,6 +1,7 @@
 from django.contrib.admin.options import VERTICAL
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 
 class Board(models.Model):
@@ -16,6 +17,9 @@ class Board(models.Model):
 
     def get_posts_count(self):
        return Post.objects.filter(topic__board=self).count()
+
+    def get_absolute_url(self):
+        return reverse("board_topics",kwargs={"pk":self.pk})
 
 
 class Topic(models.Model):

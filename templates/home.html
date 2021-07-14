@@ -17,7 +17,7 @@
       {% for board in boards %}
         <tr>
           <td>
-            <a href="{% url 'board_topics' board.pk %}">{{ board.name }}</a>
+            <a href="{{board.get_absolute_url}}">{{ board.name }}</a>
             <small class="text-muted d-block">{{ board.description }}</small>
           </td>
           <td class="align-middle">  {{ board.get_posts_count }}</td>
