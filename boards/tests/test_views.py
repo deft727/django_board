@@ -1,11 +1,11 @@
-from .forms import NewTopicForm
 from os import name
 from django.http import response
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.urls import reverse,resolve
-from .views import home, board_topics, new_topic
-from .models import Board, Topic, Post
+from ..views import home, board_topics, new_topic
+from ..models import Board, Topic, Post
+from ..forms import NewTopicForm
 
 
 class HomeTests(TestCase):
