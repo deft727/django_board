@@ -2,6 +2,7 @@ from django.contrib.admin.options import VERTICAL
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.utils.text import Truncator
 
 
 class Board(models.Model):
@@ -36,6 +37,9 @@ class Topic(models.Model):
         return self.subject
 
 
+    def __str__(self):
+        return self.subject
+
 class Post(models.Model):
     message = models.TextField(max_length=4000,help_text='Макс. кол-во символов 4000',verbose_name='Сообщение')
     topic = models.ForeignKey(Topic, related_name='posts',on_delete=models.CASCADE)
@@ -48,6 +52,10 @@ class Post(models.Model):
         verbose_name ='Пост'
         verbose_name_plural ='Посты'
 
+
+    def __str__(self):
+        truncated_message = Truncator(self.message)
+        return truncated_message.chars(30)
 
 
     
