@@ -1,5 +1,7 @@
-{% extends 'base.html' %}
 
+{% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
 {% block title %}
   {{ board.name }} - {{ block.super }}
 {% endblock %}
@@ -9,32 +11,82 @@
   <li class="breadcrumb-item active">{{ board.name }}</li>
 {% endblock %}
 
+
+
+
+
 {% block content %}
+<div class="infinite-container">
 
 <div class="mb-4">
   <a href="{% url 'new_topic' board.pk %}" class="btn btn-primary">New topic</a>
 </div>
 
-  <table class="table">
-    <thead class="thead-inverse">
+<table class="table table-striped mb-4">
+  <thead class="thead-inverse">
+    <tr>
+      <th>Topic</th>
+      <th>Starter</th>
+      <th>Replies</th>
+      <th>Views</th>
+      <th>Last Update</th>
+    </tr>
+  </thead>
+  <tbody>
+    <div class="infinite-item">
+    {% for topic in topics %}
+      {% url 'topic_posts' board.pk topic.pk as topic_url %}
       <tr>
-        <th>Topic</th>
-        <th>Starter</th>
-        <th>Replies</th>
-        <th>Views</th>
-        <th>Last Update</th>
+        <td>
+          <p class="mb-0">
+            <a href="{{ topic_url }}">{{ topic.subject }}</a>
+          </p>
+          <small class="text-muted">
+            Pages:
+            {% for i in topic.get_page_range %}
+              <a href="{{ topic_url }}?page={{ i }}">{{ i }}</a>
+            {% endfor %}
+            {% if topic.has_many_pages %}
+            ... <a href="{{ topic_url }}?page={{ topic.get_page_count }}">Last Page</a>
+            {% endif %}
+          </small>
+        </td>
+        <td class="align-middle">{{ topic.starter.username }}</td>
+        <td class="align-middle">{{ topic.replies }}</td>
+        <td class="align-middle">{{ topic.views }}</td>
+        <td class="align-middle">{{ topic.last_updated|naturaltime }}</td>
       </tr>
-    </thead>
-    <tbody>
-      {% for topic in topics %}
-      <tr>
-        <td><a href="{% url 'topic_posts' board.pk topic.pk %}">{{ topic.subject }}</a></td>
-        <td>{{ topic.starter.username }}</td>
-        <td>{{ topic.replies }}</td>
-        <td>{{ topic.views }}</td>
-        <td>{{ topic.last_updated }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    {% endfor %}
+    </div>
+  </tbody>
+</table>
+</div>
+
+
+{% if page_obj.has_next %}
+  <a  class="infinite-more-link" href="?page={{ page_obj.next_page_number }}">More</a>
+{% endif %}
+
+
+
+
+
+<div class="loading" style="display: none;">
+  Loading...
+</div>
+
+
+
+
 {% endblock %}
+
+
+{% block javascript %}
+
+<script>
+var infinite = new Waypoint.Infinite({
+  element: $('.infinite-container')[0]
+})
+</script>
+
+{% endblock javascript %}
