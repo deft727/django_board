@@ -11,6 +11,8 @@ db.sqlite3
 
 venv
 
+static/admin/fonts/LICENSE.txt
+
 __pycache__/
 */__pycache__/
 *.py[cod]

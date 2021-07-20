@@ -15,6 +15,16 @@ from django.views.generic import CreateView
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 
+def new_articles(request):
+    import random
+    randomname = ['Python','Django','Flask','Docker']
+    user =  User.objects.create_user(random.choice(randomname), 'randomemail', 'randomemail')
+    board = Board.objects.get(name=random.choice(randomname))
+    for i in range(100):
+        subject = 'Topic test #{}'.format(i)
+        topic = Topic.objects.create(subject=subject, board=board, starter=user)
+        Post.objects.create(message='Lorem ipsum...', topic=topic, created_by=user)
+    return redirect('home')
 
 # def home(request):
 #     boards = Board.objects.all()
