@@ -20,7 +20,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth import authenticate,login
 from django.template.loader import render_to_string
 from django.http import JsonResponse
-from .utils import get_user
+from .utils import get_user_status
 from django.contrib import messages
 
 
@@ -101,8 +101,9 @@ class BoardListView(ListView):
     def get_context_data(self,**kwargs):
         # messages.add_message(self.request,messages.SUCCESS,'Товар добавлен в избранноe')
         context = super().get_context_data(**kwargs)
-        context['bloger'] = get_user(self.request)
+        context['bloger'] = get_user_status(self.request)
         return context
+
 
 
 class TopicListView(ListView):
@@ -180,7 +181,7 @@ def board_create(request):
             boards = Board.objects.all()
             data['html_partial_board'] = render_to_string('./includes/partial_board.html', {
                 'boards': boards,
-                'bloger': get_user(request)
+                'bloger': get_user_status(request)
                 })
         else:
             data['form_is_valid'] = False
@@ -213,7 +214,7 @@ def save_board_form(request, form, template_name):
             boards = Board.objects.all()
             data['html_partial_board'] = render_to_string('./includes/partial_board.html', {
                 'boards': boards,
-                'bloger': get_user(request)
+                'bloger': get_user_status(request)
                 })
         else:
             data['form_is_valid'] = False
@@ -233,7 +234,7 @@ def board_delete(request, pk):
         data['form_is_valid'] = True
         data['html_partial_board'] = render_to_string('./includes/partial_board.html', {
             'boards': boards,
-            'bloger': get_user(request),
+            'bloger': get_user_status(request),
             # 'messages': messages.add_message(request,messages.SUCCESS,'добавлен')
         })
 

@@ -11,7 +11,9 @@ class SignUpFormReader(forms.ModelForm):
     password=forms.CharField(widget=forms.PasswordInput)
     email = forms.EmailField(required=True)
     of_age = forms.BooleanField(required=False)
-    
+    interests = forms.ModelMultipleChoiceField(queryset=Interests.objects.all(),
+                                                widget=forms.CheckboxSelectMultiple,
+                                                required=False)
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.fields['username'].label='Логин'
@@ -19,6 +21,8 @@ class SignUpFormReader(forms.ModelForm):
         self.fields['email'].label='Электороная почта'
         self.fields['confirm_password'].label='Подтвердите пароль'
         self.fields['of_age'].label = 'Есть 18?'
+        self.fields['interests'].label='Интересы'
+
     class Meta:
             model = User
             fields=['username','email','password','confirm_password','of_age']
@@ -54,6 +58,13 @@ class DateInput(forms.DateInput):
     input_type = 'date'
 
 class SignUpFormBloger(forms.ModelForm):
+    STATUS_TRUE ='True'
+    STATUS_FALSE='False'
+
+    STATUS_CHOICES= (
+        (STATUS_TRUE,'bloger'),
+        (STATUS_FALSE,'isn`t bloger'),
+    )
 
     confirm_password = forms.CharField(widget=forms.PasswordInput)
     password=forms.CharField(widget=forms.PasswordInput)
@@ -61,7 +72,12 @@ class SignUpFormBloger(forms.ModelForm):
     birthday = forms.DateField(required=False, widget = DateInput())
     country = forms.CharField(max_length=50)
     category = forms.ModelMultipleChoiceField(queryset=Category.objects.all(),
-                                                widget=forms.CheckboxSelectMultiple)
+                                                widget=forms.CheckboxSelectMultiple,
+                                                required=False)
+    status = forms.ChoiceField(
+        choices=STATUS_CHOICES,
+        required=False
+    )
 
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -72,11 +88,12 @@ class SignUpFormBloger(forms.ModelForm):
         self.fields['country'].label='Город'
         self.fields['birthday'].label='Дата рождения'
         self.fields['category'].label='Категории'
+        self.fields['status'].label='status'
 
 
     class Meta:
         model = User
-        fields = ('username','email','password','confirm_password','birthday','country','category')
+        fields = ('username','email','password','confirm_password','birthday','country','category','status')
        
 
     def clean_email(self):
@@ -108,14 +125,13 @@ class BlogerForm(forms.ModelForm):
     class Meta:
         model = Bloger
         fields = '__all__'
-        exclude = ('user','bloger','is_super')
-
-
-
-
+        exclude = ('user','bloger','is_super',)
 
 
 class ReaderForm(forms.ModelForm):
+    interests = forms.ModelMultipleChoiceField(queryset=Interests.objects.all(),
+                                                widget=forms.CheckboxSelectMultiple,
+                                                required=False)
     class Meta:
         model = Reader
         fields = '__all__'

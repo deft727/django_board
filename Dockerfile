@@ -12,7 +12,9 @@ RUN pip install --upgrade pip
 
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
+# RUN pip3 install dxlmispservice
 
+# RUN pip3 install setuptools-rust
 
 COPY ./entrypoint.sh .
 

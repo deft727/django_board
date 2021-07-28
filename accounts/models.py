@@ -40,6 +40,13 @@ class Bloger(models.Model):
         verbose_name = 'Блогер'
         verbose_name_plural = 'Блогеры'
 
+    STATUS_TRUE ='True'
+    STATUS_FALSE='False'
+
+    STATUS_CHOICES= (
+        (STATUS_TRUE,'bloger'),
+        (STATUS_FALSE,'isn`t bloger'),
+    )
     category = models.ManyToManyField(Category,verbose_name='Категории')
     user = models.ForeignKey(User, verbose_name='блогер', on_delete=models.CASCADE,related_name='bloger')
     username = models.CharField(blank=True, null=True, default=None, max_length=255,  verbose_name='имя')
@@ -47,7 +54,13 @@ class Bloger(models.Model):
     birthday = models.DateField(null=True, blank=True,verbose_name='Дата рождения')
     country = models.CharField(null=True, blank=True, default=None, max_length=255,  verbose_name='Город')
     is_super = models.BooleanField(default=True)
-
+    status = models.CharField(
+        max_length=100,
+        verbose_name='are you bloger?',
+        choices=STATUS_CHOICES,
+        default=STATUS_TRUE
+    )
+    
     def __srt__(self):
         return f'блогер {self.username}'
 

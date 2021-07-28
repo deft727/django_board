@@ -9,7 +9,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import UpdateView,View
 from .models import *
 from django.contrib import messages
-from boards.urls import get_user
+from boards.urls import get_user_status
 
 @method_decorator(login_required, name='dispatch')
 class UserUpdateView(UpdateView):
@@ -19,7 +19,7 @@ class UserUpdateView(UpdateView):
 
 
     def get_form_class(self):
-        if get_user(self.request) == 'bloger':
+        if get_user_status(self.request) == 'True':
             self.form_class = BlogerForm
         else:
             self.form_class = ReaderForm
@@ -102,9 +102,11 @@ class RegistrationViewBloger(View):
                 new_bloger.save()
                 bloger = Bloger.objects.create(
                     user=new_bloger,
+                    username=form.cleaned_data['username'],
                     email=new_bloger.email,
                     birthday = form.cleaned_data['birthday'],
                     country = form.cleaned_data['country'],
+                    status = form.cleaned_data['status']
                 )
                 bloger.save()
                 bloger.category.add(*form.cleaned_data['category'])
