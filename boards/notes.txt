@@ -1,0 +1,54 @@
+from django.core.urlresolvers import reverse
+from django.test import TestCase
+
+class HomeTests(TestCase):
+    def test_home_view_status_code(self):
+        url = reverse('home')
+        response = self.client.get(url)
+        self.assertEquals(response.status_code, 200)
+
+тестируем статус-код ответа. Код состояния 200 означает успех .
+
+    assertEquals - Он формирует тестовое утверждение; где str(contact)должно быть равно, чтобы 'John Smith'тест прошел.
+
+    resolve функцию. Django использует его для сопоставления запрошенного URL-адреса со списком URL-адресов, перечисленных в модуле urls.py. 
+
+
+Чтобы получить более подробную информацию о выполнении теста, установите многословие на более высокий уровень:
+
+python manage.py test --verbosity=2
+
+setUpметод. В методе настройки мы создали экземпляр Board для использования в тестах. setUpметоде мы подготавливаем среду для запуска тестов, чтобы смоделировать сценарий.
+
+
+ def test_board_topics_url_resolves_board_topics_view(self):
+        view = resolve('/boards/1/')
+        self.assertEquals(view.func, board_topics)      
+         Метод: тестирует если Django использует правильную функцию просмотра для отображения темы.
+
+
+
+ def test_board_topics_view_contains_link_back_to_homepage(self):
+        board_topics_url = reverse('board_topics', kwargs={'pk': 1})
+        response = self.client.get(board_topics_url)
+        homepage_url = reverse('home')
+        self.assertContains(response, 'href="{0}"'.format(homepage_url))
+
+используем метод assertContains, чтобы проверить, содержит ли тело ответа заданный текст.
+
+
+ {{ block.super }} - - - if default title in base.html
+
+ assertIsInstanceметод впервые. В основном мы захватываем экземпляр формы в данных контекста и проверяем, является ли он файлом NewTopicForm
+
+ self.assertTrue(form.errors) чтобы убедиться, что форма показывает ошибки, когда данные недействительны.
+
+ Функциональные представления (FBV)
+Просмотры на основе классов (CBV)
+Общие представления на основе классов (GCBV)
+FBV - это простейшее представление представления Django: это просто функция, которая получает объект HttpRequest и возвращает HttpResponse .
+
+CBV - это каждое представление Django, определенное как класс Python, расширяющий django.views.generic.Viewабстрактный класс. CBV - это, по сути, класс, который обертывает FBV. CBV отлично подходят для расширения и повторного использования кода.
+
+GCBV - это встроенные CBV, которые решают определенные проблемы, такие как перечисление представлений, создание, обновление и удаление представлений.
+

@@ -1,0 +1,40 @@
+{% extends 'base_accounts.html' %}
+
+{% load static %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block body %}
+
+  <div class="container ">
+    <h1 class="text-center logo my-4 mb-5">
+      <a href="{% url 'home' %}">Django Boards</a>
+    </h1>
+    <div class="row justify-content-center ">
+        <div class="col-lg-8 col-md-10 col-sm-12">
+            <div class="card">
+          <div class="card-body">
+            <h3 class="card-title" >Sign up as ...</h3>
+            
+    <a href="{% url 'signup_reader' %}" class="btn btn-primary ml-2">Sign up as reader</a>
+    <a href="{% url 'signup_bloger' %}" class="btn btn-primary ml-2">Sign up as bloger</a>
+          </div>
+        
+        </div>
+        <div class="text-center py-2">
+          <small>
+            <a href="{%url 'password_reset'%}" class="text-muted">Forgot your password?</a>
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+
+
+
+

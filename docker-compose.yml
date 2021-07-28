@@ -1,0 +1,43 @@
+version:  "3"
+
+services:
+  postgresdb:
+    image: postgres:12.0-alpine
+    build:
+      context: ../docker/postgres
+      dockerfile: Dockerfile
+    environment:
+      - POSTGRES_PASSWORD=devpass
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=prod_db
+    volumes:
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    env_file:
+        - ./.env.dev
+
+  web:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+     - ./:/usr/src/app
+    depends_on:
+     - postgresdb
+    ports:
+      - 8000:8000 
+    links:
+      - postgresdb:prod_db 
+
+  nginx:
+    build:
+      context: ../docker/nginx
+      dockerfile: Dockerfile
+    depends_on:
+      - web
+      - postgresdb
+    ports:
+      - "809:809"
+    volumes:
+      - .myproject/static/:/static/

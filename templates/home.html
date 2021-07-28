@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{%load static%}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active"> Boards</li>
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'js/boards.js' %}"></script>
+<script>
+  var infinite = new Waypoint.Infinite({
+    element: $('.infinite-container')[0],
+    onBeforePageLoad: function () {
+      $('.loading').show();
+    },
+    onAfterPageLoad: function ($items) {
+      $('.loading').hide();
+    }
+  });
+</script>
+{% endblock %}
+
+
+{% block content %}
+
+
+
+<p>
+  <p>
+  <button type="button"
+            class="btn btn-primary js-create-board"
+            data-url="{% url 'boards_create' %}">
+      <span class="glyphicon glyphicon-plus"></span>
+      New board
+    </button>
+
+  </p>
+
+<table class="table infinite-container"  id="board-table">
+  <thead class="thead-dark">
+    <tr>
+      <th>Board</th>
+      <th>Posts</th>
+      <th>Topics</th>
+      <th>Last Post</th>
+
+      {% if user.is_authenticated and bloger == 'bloger' %}
+      <th>Edit</th>
+      {%endif%}
+
+    </tr>
+  </thead>
+  <tbody class="infinite-item">
+    
+{%include 'includes/partial_board.html' %}
+
+  </tbody>
+</table>
+
+<div class="modal fade" id="modal-board">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    </div>
+  </div>
+
+<div class="loading" style="display: none;">
+  Loading...
+</div>
+
+{% if page_obj.has_next %}
+<a class="infinite-more-link" href="?page={{ page_obj.next_page_number }}"></a>
+{% endif %}
+
+
+
+{% endblock %}
