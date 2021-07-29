@@ -2,7 +2,7 @@ from .settings import *
 
 
 import socket
-if socket.gethostname()=="Raouf-PC":
+if socket.gethostname()=="http://127.0.0.1:8000/":
     from local_settings import *
 
 

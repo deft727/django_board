@@ -22,6 +22,7 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 from .utils import get_user_status
 from django.contrib import messages
+from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
 
 
 def new_articles(request):
@@ -99,9 +100,11 @@ class BoardListView(ListView):
     paginate_by = 10
     ordering= ['-id']
     def get_context_data(self,**kwargs):
-        # messages.add_message(self.request,messages.SUCCESS,'Товар добавлен в избранноe')
+        # messages.add_message(self.request,messages.SUCCESS,'khftyde')
         context = super().get_context_data(**kwargs)
         context['bloger'] = get_user_status(self.request)
+        context['logs'] = LogEntry.objects.exclude(change_message="No fields changed.").order_by('-action_time')[:20]
+        context['logCount'] = LogEntry.objects.exclude(change_message="No fields changed.").order_by('-action_time')[:20].count()
         return context
 
 

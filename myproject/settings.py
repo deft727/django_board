@@ -64,7 +64,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
-
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -82,7 +81,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
             ],
@@ -157,6 +155,7 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.github.GithubOAuth2',
     'social_core.backends.twitter.TwitterOAuth',
     'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.google.GoogleOAuth2',
 
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -187,7 +186,6 @@ USE_TZ = True
 
 LOGIN_REDIRECT_URL = 'home'
 
-LOGOUT_REDIRECT_URL = 'home'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -214,14 +212,25 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # During development only
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-LOGIN_URL = 'login'
-LOGOUT_URL = 'logout'
-LOGIN_REDIRECT_URL = 'home'
+
+LOGIN_URL = '/auth/login/google-oauth2/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'my_account'
 
 SITE_ID = 1
 
-
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
 SOCIAL_AUTH_GITHUB_KEY = 'ac2c81b0f7e251748034'
 SOCIAL_AUTH_GITHUB_SECRET = 'ac46faf76c240ec910fa0d52e2bcf51f2dd522c1'
+
+SOCIAL_AUTH_FACEBOOK_KEY = '868434577098385'
+SOCIAL_AUTH_FACEBOOK_SECRET = 'e2351fc2821ceefcb601b1e4794c9ef8'
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '233025016839-029b0a3bsvuu5h97vccm6jdv10ung6hh.apps.googleusercontent.com'
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'wPLtnBc7cQzmCVtMM9uV_CZN'

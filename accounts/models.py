@@ -60,9 +60,7 @@ class Bloger(models.Model):
         choices=STATUS_CHOICES,
         default=STATUS_TRUE
     )
-    
-    def __srt__(self):
-        return f'блогер {self.username}'
+
 
 
 class Reader(models.Model):
@@ -76,7 +74,6 @@ class Reader(models.Model):
     of_age = models.BooleanField(default=False,null=True,blank=True)
     interests = models.ManyToManyField(Interests,verbose_name='Интересы')
 
-    def __srt__(self):
-        return f'читатель {self.username}'
+
 
 

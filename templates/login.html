@@ -23,9 +23,11 @@
               <button type="submit" class="btn btn-primary btn-block">Log in</button>
             </form>
             <br>
-            <p><strong>-- OR --</strong></p>
-            <a href="{% url 'social:begin' 'github' %}">Login with GitHub</a>
-            
+            <p><strong>-- OR only for Reader Login with  --</strong></p>
+            <a href="{% url 'social:begin' 'github' %}">GitHub</a> |
+            <a href="{% url 'social:begin' 'facebook' %}">Facebook</a>|
+            <a href="{% url 'social:begin' 'google-oauth2' %}">Google</a>
+
             <br>
           </div>
           <div class="card-footer text-muted text-center">

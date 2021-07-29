@@ -8,7 +8,7 @@ urlpatterns = [
         path('signup/',ChooseSignup.as_view(), name='signup'),
         path('signup-reader/',RegistrationViewReader.as_view(), name='signup_reader'),
                 path('signup-bloger/',RegistrationViewBloger.as_view(), name='signup_bloger'),
-        path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+        path('logout/', auth_views.LogoutView.as_view(), name='logout',),
         path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
                 path('reset/', auth_views.PasswordResetView.as_view(template_name="password-reset.html"),name="password_reset"),
                 path('reset/done/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name="password_reset_confirm.html"),name="password_reset_confirm"),
