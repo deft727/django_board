@@ -1,4 +1,6 @@
 from math import e
+
+from django.http.response import HttpResponseRedirect
 from accounts.models import Bloger
 from os import name
 from django.core.checks import messages
@@ -31,17 +33,24 @@ from weasyprint import HTML
 def export_boards_pdf(request, pk):
     board = Board.objects.get(pk=pk)
     topics = board.topic_set.all()
-    html_string = render_to_string(
-        'topic_posts_to_pdf.html', { 'topics': topics, 'board': board})
+    if len(topics)>1:
+        html_string = render_to_string(
+            'topic_posts_to_pdf.html', { 'topics': topics, 'board': board})
 
-    html = HTML(string=html_string)
-    html.write_pdf(target='/tmp/TopicsPdf.pdf')
+        html = HTML(string=html_string)
+        html.write_pdf(target='/tmp/TopicsPdf.pdf')
 
-    fs = FileSystemStorage('/tmp')
-    with fs.open('mypdf.pdf') as pdf:
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
-        return response
+        fs = FileSystemStorage('/tmp')
+        with fs.open('mypdf.pdf') as pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
+            return response
+    else:
+        messages.add_message(request,messages.ERROR,'Nothing import top pdf')
+        try:
+            return redirect(request.META.get('HTTP_REFERER','redirect_if_referer_not_found'))
+        except:
+            return redirect('home')
 
 
 def export_boards_xls(request,pk):
@@ -64,14 +73,20 @@ def export_boards_xls(request,pk):
     font_style = xlwt.XFStyle()
 
     rows = Board.objects.get(pk=pk).topic_set.all().values_list('subject', 'board','starter')
-    for row in rows:
-        row_num += 1
-        for col_num in range(len(row)):
-            ws.write(row_num, col_num, row[col_num], font_style)
+    if len(rows)>1:
+        for row in rows:
+            row_num += 1
+            for col_num in range(len(row)):
+                ws.write(row_num, col_num, row[col_num], font_style)
 
-    wb.save(response)
-    return response
-
+        wb.save(response)
+        return response
+    else:
+        messages.add_message(request,messages.ERROR,'Nothing import to xls')
+        try:
+            return redirect(request.META.get('HTTP_REFERER','redirect_if_referer_not_found'))
+        except:
+            return redirect('home')
 
 
 def new_articles(request):
