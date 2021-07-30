@@ -9,7 +9,7 @@ urlpatterns = [
         path('signup-reader/',RegistrationViewReader.as_view(), name='signup_reader'),
                 path('signup-bloger/',RegistrationViewBloger.as_view(), name='signup_bloger'),
         path('logout/', auth_views.LogoutView.as_view(), name='logout',),
-        path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+        path('login/', LoginView.as_view(), name='login'),
                 path('reset/', auth_views.PasswordResetView.as_view(template_name="password-reset.html"),name="password_reset"),
                 path('reset/done/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name="password_reset_confirm.html"),name="password_reset_confirm"),
                 path('passwod/reset/done/', auth_views.PasswordResetDoneView.as_view(template_name="password_reset_done.html"),name="password_reset_done"),
@@ -19,5 +19,4 @@ urlpatterns = [
         path('settings/password/done/', auth_views.PasswordChangeDoneView.as_view(template_name='password_change_done.html'),
         name='password_change_done'),
         path('settings/account/', accounts_views.UserUpdateView.as_view(), name='my_account'),
-
 ]

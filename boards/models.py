@@ -5,12 +5,13 @@ from django.urls import reverse
 from django.utils.text import Truncator
 from django.utils.html import mark_safe
 from markdown import markdown
+from simple_history.models import HistoricalRecords
 import math
-
 
 class Board(models.Model):
     name = models.CharField(max_length=30, unique=True,verbose_name='Доска')
     description = models.CharField(max_length=100,verbose_name='Описание')
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name ='Доска'
@@ -34,8 +35,8 @@ class Topic(models.Model):
 
     subject = models.CharField(max_length=255,verbose_name='Тема')
     last_updated = models.DateTimeField(auto_now_add=True)
-    board = models.ForeignKey(Board, related_name='topics',on_delete=models.CASCADE)
-    starter = models.ForeignKey(User, related_name='topics',on_delete=models.CASCADE)
+    board = models.ForeignKey(Board,on_delete=models.CASCADE)
+    starter = models.ForeignKey(User, on_delete=models.CASCADE)
     views = models.PositiveIntegerField(default=0)
     class Meta:
         verbose_name ='Тема'

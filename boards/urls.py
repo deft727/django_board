@@ -15,6 +15,6 @@ urlpatterns = [
                 path('boards/create/',board_create, name='boards_create'),
                 path('boards/<int:pk>/update/', board_update, name='boards_update'),
                 path('boards/<int:pk>/delete/', board_delete, name='boards_delete'),
-
-
+        path('boards/<int:pk>/to-xls/',export_boards_xls,name='to-xls'),
+        path('boards/<int:pk>/to-pdf/',export_boards_pdf,name='to-pdf')
 ]

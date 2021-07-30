@@ -23,20 +23,17 @@
 
 {% block content %}
 
-
-
 <p>
-  <p>
-    {% if bloger == 'True' %}
 
+{% if user.is_authenticated and bloger == 'True'%}
   <button type="button"
             class="btn btn-primary js-create-board"
             data-url="{% url 'boards_create' %}">
       <span class="glyphicon glyphicon-plus"></span>
       New board
     </button>
-
   </p>
+  
   <button type="button" class="btn btn-primary mb-1" data-toggle="modal" data-target="#exampleModal" >
     Просмотреть последние действия
   </button>
@@ -46,56 +43,49 @@
     <div class="modal-dialog" role="document">
       <div class="modal-body p-3 mb-2 bg-white text-dark" >
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <h5 class="modal-title" id="exampleModalLabel">Last actions</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
+        
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">User</th>
+      <th scope="col">Object</th>
+      <th scope="col">Changes</th>
+      <th scope="col">Time</th>
+    </tr>
+  </thead>
 
-  <ul >
-    <li >
-        <h3><span>{{ logCount }}</span> Notification(s) </h3>
-        <a href="{% url 'home' %}"> View All </a>
-    </li>
-        {% if logs %}
-            <ul >
-                {% for log in logs %}
-                    <li>
-                        <a href="#">
-                            <span >{{ log.action_time|date:"m/d/Y - g:ia" }} </span>
-                            <span>
-                                {% if log.action_flag == 1 %}
-                                    <span >
-                                        <i></i>
-                                    </span>
-                                {% elif log.action_flag == 2 %}
-                                    <span >
-                                        <i ></i>
-                                    </span>
-                                {% elif log.action_flag == 3 %}
-                                    <span >
-                                        <i></i>
-                                    </span>
-                                {% endif %}
-                                {{ log.content_type|capfirst }}: {{ log }}
-                            </span>
-                        </a>
-                    </li>
-                 {% endfor %}
-            </ul>
-        {% else %}
-            <p>{% trans "This object doesn't have a change history. It probably wasn't added via this admin site." %}</p>
-        {% endif %}
-    </li>
-</ul>
+  <tbody>
+
+  {% for i in history.all%}
+{%if i.history_user%}
+    <tr>
+    <td>{{i.history_user}}</td>
+    <td>{{i.history_object}}</td>
+    {%if i.history_type == '~' %}
+    <td>Update</td>
+    {%elif i.history_type == '+'%}
+    <td>Create</td>
+    {%elif i.history_type == '-'%}
+    <td>Delete</td>
+    {%endif%}
+    <td>{{i.history_date}}</td>
+    {%endif%}
+    {%endfor%} 
+   </tr>
+  </tbody>
+  </table>
 
 </div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 </div>
 </div>
-</div>
+
 {%endif%}
+
 
 
 

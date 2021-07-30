@@ -1,5 +1,5 @@
 {% extends 'base_accounts.html' %}
-
+{% load recaptcha2 %}
 {% load static %}
 {% block stylesheet %}
   <link rel="stylesheet" href="{% static 'css/accounts.css' %}">
@@ -20,6 +20,8 @@
               {% csrf_token %}
               <input type="hidden" name="next" value="{{ next }}">
               {% include 'includes/form.html' %}
+              {% recaptcha_init %}
+
               <button type="submit" class="btn btn-primary btn-block">Log in</button>
             </form>
             <br>

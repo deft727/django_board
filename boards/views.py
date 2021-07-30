@@ -22,7 +22,56 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 from .utils import get_user_status
 from django.contrib import messages
-from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
+import xlwt
+from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponse, HttpResponseNotFound
+from weasyprint import HTML
+
+
+def export_boards_pdf(request, pk):
+    board = Board.objects.get(pk=pk)
+    topics = board.topic_set.all()
+    html_string = render_to_string(
+        'topic_posts_to_pdf.html', { 'topics': topics, 'board': board})
+
+    html = HTML(string=html_string)
+    html.write_pdf(target='/tmp/TopicsPdf.pdf')
+
+    fs = FileSystemStorage('/tmp')
+    with fs.open('mypdf.pdf') as pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
+        return response
+
+
+def export_boards_xls(request,pk):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="TopicsXml.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Topics')
+
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ['subject', 'board','starter'  ]
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    font_style = xlwt.XFStyle()
+
+    rows = Board.objects.get(pk=pk).topic_set.all().values_list('subject', 'board','starter')
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+    return response
+
 
 
 def new_articles(request):
@@ -103,8 +152,7 @@ class BoardListView(ListView):
         # messages.add_message(self.request,messages.SUCCESS,'khftyde')
         context = super().get_context_data(**kwargs)
         context['bloger'] = get_user_status(self.request)
-        context['logs'] = LogEntry.objects.exclude(change_message="No fields changed.").order_by('-action_time')[:20]
-        context['logCount'] = LogEntry.objects.exclude(change_message="No fields changed.").order_by('-action_time')[:20].count()
+        context['history'] = Board.history.all()[:10]
         return context
 
 
@@ -121,7 +169,7 @@ class TopicListView(ListView):
 
     def get_queryset(self):
         self.board = get_object_or_404(Board, pk=self.kwargs.get('pk'))
-        queryset = self.board.topics.order_by('-last_updated').annotate(replies=Count('posts') - 1)
+        queryset = self.board.topic_set.all().order_by('-last_updated').annotate(replies=Count('posts') - 1)
         return queryset
         
 

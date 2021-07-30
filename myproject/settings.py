@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'psycopg2',
     'faker',
 
+    'snowpenguin.django.recaptcha2',
+    'simple_history',
     'django.contrib.sites',
     'django.contrib.flatpages',
     'social_django',
@@ -64,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -83,6 +86,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
+                
             ],
         },
     },
@@ -215,7 +219,7 @@ if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
-LOGIN_URL = '/auth/login/google-oauth2/'
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = 'my_account'
@@ -234,3 +238,10 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '233025016839-029b0a3bsvuu5h97vccm6jdv10ung6hh.a
 
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'wPLtnBc7cQzmCVtMM9uV_CZN'
+
+
+# '6LdgxMobAAAAAASmY81cQDAkI6rK8RXp5EYJZdXo'
+
+GOOGLE_RECAPTCHA_SECRET_KEY ='6LfS2swbAAAAAJPp0Zu7zK23s__XlLukWvENo_gj'
+RECAPTCHA_PRIVATE_KEY = '6LfS2swbAAAAAJPp0Zu7zK23s__XlLukWvENo_gj'
+RECAPTCHA_PUBLIC_KEY = '6LfS2swbAAAAALsPWnB2GOlOBdQiqnXgn9H0Raq0'
