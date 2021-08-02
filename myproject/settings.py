@@ -215,8 +215,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# if DEBUG:
+#     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 LOGIN_URL = 'login'
@@ -245,3 +245,12 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'wPLtnBc7cQzmCVtMM9uV_CZN'
 GOOGLE_RECAPTCHA_SECRET_KEY ='6LfS2swbAAAAAJPp0Zu7zK23s__XlLukWvENo_gj'
 RECAPTCHA_PRIVATE_KEY = '6LfS2swbAAAAAJPp0Zu7zK23s__XlLukWvENo_gj'
 RECAPTCHA_PUBLIC_KEY = '6LfS2swbAAAAALsPWnB2GOlOBdQiqnXgn9H0Raq0'
+
+ADMIN = 'test.blogodvich@gmail.com'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'test.blogodvich@gmail.com'
+EMAIL_HOST_PASSWORD = 'Kirill99'
+EMAIL_PORT = 587
+EMAIL_HOST_PASSWORD ='nzsietbzmayagzfa'

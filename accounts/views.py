@@ -14,6 +14,8 @@ import urllib
 import urllib.request as urllib2
 import json
 from django.conf import settings
+from boards.utils import send_user_mail
+from django.contrib import messages
 
 
 @method_decorator(login_required, name='dispatch')
@@ -77,8 +79,8 @@ class RegistrationViewReader(View):
                     of_age = form.cleaned_data['of_age']
                 )
                 reader.save()
-                auth_login(request, new_user)
-                return redirect('home')
+                auth_login(request, new_user,  backend='django.contrib.auth.backends.ModelBackend')
+                send_user_mail(request,subject='Hello Reader',content=f'Welcome on our site {new_user.username}',email=new_user.email)
         else:
             form = SignUpFormReader()
         return render(request, 'signup.html', {'form': form})
@@ -96,7 +98,7 @@ class RegistrationViewBloger(View):
         }
         return render(request,'signup.html',context)
 
-    def post(self,request,*args,**kwargs):
+    def post(self,request,backend='django.contrib.auth.backends.ModelBackend',*args,**kwargs):
         if request.method == 'POST':
             form = SignUpFormBloger(request.POST)
             if form.is_valid():
@@ -115,10 +117,9 @@ class RegistrationViewBloger(View):
                 )
                 bloger.save()
                 bloger.category.add(*form.cleaned_data['category'])
-
-                auth_login(request,new_bloger)
-
-                return redirect('home')
+                auth_login(request, new_bloger,  backend='django.contrib.auth.backends.ModelBackend')
+                send_user_mail(request,subject='Hello Bloger',content=f'Welcome on our site {new_bloger.username}',email=new_bloger.email)
+                return redirect ('home')
         else:
             form = SignUpFormReader()
         return render(request, 'signup.html', {'form': form})
@@ -151,8 +152,6 @@ class LoginView(View):
                 user= authenticate(username=username,password=password)
             if user:
                 auth_login(request,user)
-
             return HttpResponseRedirect('/')
-
         context={'form':form,}
         return render(request,'login.html',context)

@@ -2,7 +2,9 @@ from accounts.models import Bloger,Reader
 from django.contrib.auth.models import User
 from social_django import *
 from social_core import *
-
+from django.core.mail import send_mail
+from django.contrib import messages
+from .forms import *
 
 def get_user_status(request):
     if request.user.is_authenticated:
@@ -25,3 +27,12 @@ def create_profile(strategy, details, response, user, *args, **kwargs):
         new_profile.save()
 
     return kwargs
+
+
+def send_user_mail(request,subject,content,email):
+    try:
+        mail=send_mail(subject, content,'test.blogodvich@gmail.com',[email,],
+                     fail_silently=False)
+        messages.success(request,'Письмо отправлено')
+    except:
+        messages.error(request,'Ошибка отправки')
