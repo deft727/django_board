@@ -29,6 +29,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 # os.environ.get("DJANGO_ALLOWED_HOSTS")
+
+
+
+CELERY_TIMEZONE = "Europe/Kiev"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_BROKER_URL = 'amqp://localhost'
+# 'redis://localhost:6370/0'
+
 MESSAGE_LEVEL = message_constants.DEBUG
 MESSAGE_LEVEL = 10
 
@@ -210,11 +219,14 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
+# STATIC_ROOT =  os.path.join(BASE_DIR, 'static')
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
+# django fotolog
 # if DEBUG:
 #     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

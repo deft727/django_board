@@ -41,3 +41,6 @@ services:
       - "809:809"
     volumes:
       - .myproject/static/:/static/
+    
+  redis:
+    image: redis

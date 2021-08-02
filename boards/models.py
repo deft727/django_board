@@ -65,6 +65,14 @@ class Topic(models.Model):
         return self.posts.order_by('-created_at')[:10]
 
 
+
+class Photo(models.Model):
+    title = models.CharField(max_length=255, blank=True)
+    file = models.FileField(upload_to='photos/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    topic = models.ForeignKey(Topic,on_delete=models.CASCADE)
+
+
 class Post(models.Model):
     message = models.TextField(max_length=4000,help_text='Макс. кол-во символов 4000',verbose_name='Сообщение')
     topic = models.ForeignKey(Topic, related_name='posts',on_delete=models.CASCADE)

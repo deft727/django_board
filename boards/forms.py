@@ -1,5 +1,6 @@
 from django import forms
-from .models import Topic,Post,Board
+from django.http import request
+from .models import Topic,Post,Board,Photo
 
 class NewTopicForm(forms.ModelForm):
     message = forms.CharField(
@@ -8,10 +9,10 @@ class NewTopicForm(forms.ModelForm):
         ),
         max_length=4000,
         help_text='Max length is 4000')
-
+    file = forms.FileField(required=False)
     class Meta:
         model = Topic
-        fields = ['subject', 'message']
+        fields = ['subject', 'message','file']
     
 
 
@@ -25,3 +26,5 @@ class BoardForm(forms.ModelForm):
     class Meta:
         model = Board
         fields = '__all__'       
+
+

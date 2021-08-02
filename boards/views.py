@@ -11,7 +11,7 @@ from django.http import Http404, request
 from django.db.models import Count
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
-from .models import Board, Topic , Post
+from .models import Board, Photo, Topic , Post
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.generic import View,CreateView,DateDetailView,ListView,UpdateView
@@ -28,6 +28,10 @@ import xlwt
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse, HttpResponseNotFound
 from weasyprint import HTML
+from django.db.models.signals import post_save
+from accounts.tasks import send_user_mail_task
+from django.dispatch import receiver
+
 
 
 def export_boards_pdf(request, pk):
@@ -117,7 +121,7 @@ def new_articles(request):
 def new_topic(request, pk):
     board = get_object_or_404(Board, pk=pk)
     if request.method == 'POST':
-        form = NewTopicForm(request.POST)
+        form = NewTopicForm(request.POST,  request.FILES)
         if form.is_valid():
             topic = form.save(commit=False)
             topic.board = board
@@ -128,10 +132,51 @@ def new_topic(request, pk):
                 topic = topic,
                 created_by = request.user
             )
-            return redirect('topic_posts', pk=pk, topic_pk=topic.pk)
-    else:
-        form = NewTopicForm()
+            photo = Photo.objects.create(
+                file = form.cleaned_data.get('file'),
+                topic = topic
+            )
+            photo.save()
+            data = {'is_valid': True, 'name': photo.file.name, 'url': photo.file.url}  
+        else:
+            form = NewTopicForm()
+            data = {'is_valid': False}
+            
     return render(request, 'new_topic.html', {'board': board,'form':form})
+
+
+class New_topicView(View):
+    def get(self,request,pk):
+        board = get_object_or_404(Board, pk=pk)
+        photos_list = Photo.objects.all()
+        form = NewTopicForm(request.POST, request.FILES or None)
+        return render(request, 'new_topic.html', {'board': board,'form':form,'photos': photos_list})
+
+    def post(elf,request,pk):
+        board = get_object_or_404(Board, pk=pk)
+        form = NewTopicForm(request.POST, request.FILES)
+        if form.is_valid():
+            topic = form.save(commit=False)
+            topic.board = board
+            topic.starter = request.user
+            topic.save()
+            post = Post.objects.create(
+                message = form.cleaned_data.get('message'),
+                topic = topic,
+                created_by = request.user
+            )
+            photo = Photo.objects.create(
+                file = form.cleaned_data.get('file'),
+                topic = topic
+            )
+            photo.save()
+            data = {'is_valid': True, 'name': photo.file.name, 'url': photo.file.url}  
+        else:
+            form = NewTopicForm()
+            data = {'is_valid': False}
+        return JsonResponse(data)
+
+
 
 
 @login_required
@@ -148,10 +193,9 @@ def reply_topic(request, pk, topic_pk):
             topic.save()
             topic_url = reverse('topic_posts', kwargs={'pk': pk, 'topic_pk': topic_pk})
             page = topic.get_page_count()
-            id = post.pk
             topic_post_url = f'{topic_url}?page={page}'
-
             return redirect(topic_post_url)
+            
     else:
         form = PostForm()
     return render(request, 'reply_topic.html', {'topic': topic, 'form': form})
@@ -198,7 +242,7 @@ class PostListView(ListView):
     model = Post
     context_object_name = 'posts'
     template_name = 'topic_posts.html'
-    paginate_by = 2
+    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         session_key = 'viewed_topic_{}'.format(self.topic.pk)
