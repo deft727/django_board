@@ -1,6 +1,7 @@
 from django.contrib.admin.options import VERTICAL
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.deletion import CASCADE
 from django.urls import reverse
 from django.utils.text import Truncator
 from django.utils.html import mark_safe
@@ -31,8 +32,16 @@ class Board(models.Model):
             return Post.objects.filter(topic__board=self).order_by('-created_at').first()
 
 
-class Topic(models.Model):
 
+class Photo(models.Model):
+    title = models.CharField(max_length=255, blank=True,null=True)
+    file = models.FileField(upload_to='photos/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    topic = models.ForeignKey("Topic",on_delete=models.CASCADE)
+
+
+class Topic(models.Model):
+    # photo = models.ForeignKey(Photo,blank=True,on_delete=CASCADE)
     subject = models.CharField(max_length=255,verbose_name='Тема')
     last_updated = models.DateTimeField(auto_now_add=True)
     board = models.ForeignKey(Board,on_delete=models.CASCADE)
@@ -66,11 +75,7 @@ class Topic(models.Model):
 
 
 
-class Photo(models.Model):
-    title = models.CharField(max_length=255, blank=True)
-    file = models.FileField(upload_to='photos/')
-    uploaded_at = models.DateTimeField(auto_now_add=True)
-    topic = models.ForeignKey(Topic,on_delete=models.CASCADE)
+
 
 
 class Post(models.Model):

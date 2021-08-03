@@ -1,6 +1,8 @@
+from datetime import date
 from math import e
-
+import time
 from django.http.response import HttpResponseRedirect
+from xlwt.ExcelMagic import PtgNames
 from accounts.models import Bloger
 from os import name
 from django.core.checks import messages
@@ -8,7 +10,7 @@ from django.urls.conf import path
 from .forms import NewTopicForm,PostForm,BoardForm
 from django.shortcuts import render, get_object_or_404,redirect
 from django.http import Http404, request
-from django.db.models import Count
+from django.db.models import Count, fields
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from .models import Board, Photo, Topic , Post
@@ -153,6 +155,7 @@ class New_topicView(View):
         return render(request, 'new_topic.html', {'board': board,'form':form,'photos': photos_list})
 
     def post(elf,request,pk):
+        time.sleep(1)
         board = get_object_or_404(Board, pk=pk)
         form = NewTopicForm(request.POST, request.FILES)
         if form.is_valid():
@@ -165,16 +168,25 @@ class New_topicView(View):
                 topic = topic,
                 created_by = request.user
             )
-            photo = Photo.objects.create(
-                file = form.cleaned_data.get('file'),
-                topic = topic
-            )
-            photo.save()
-            data = {'is_valid': True, 'name': photo.file.name, 'url': photo.file.url}  
+
+            files = request.FILES.getlist('file')
+            for i in files:
+                request.FILES['file'] = i
+                photo = Photo(
+                    title = i.name,
+                    file = i,
+                    topic=topic
+                )
+                photo.save()
+
+                
+            print(form.cleaned_data.get('file'))
+            data = {'is_valid': True, 'name': 'czsvzvdf', 'url': 'vzvdfvzdfv'}  
         else:
             form = NewTopicForm()
             data = {'is_valid': False}
         return JsonResponse(data)
+
 
 
 

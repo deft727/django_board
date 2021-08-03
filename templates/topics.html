@@ -12,22 +12,17 @@
 {% endblock %}
 
 
-
-
-
 {% block content %}
 <div class="infinite-container">
 
 <div class="mb-4">
-  <a href="{% url 'new_topic' board.pk %}" class="btn btn-primary">New topic</a>
+  <a href="request.FILES" class="btn btn-primary">New topic</a>
 </div>
-
 <div class="mb-4">
   <a href="{% url 'to-xls' board.pk %}" class="btn btn-primary">Export to exel</a>
   <a href="{% url 'to-pdf' board.pk %}" class="btn btn-primary">Export to pdf</a>
 
 </div>
-
 
 
 <table class="table table-striped mb-4">

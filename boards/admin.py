@@ -15,4 +15,5 @@ class BoardAdmin(admin.ModelAdmin):
 admin.site.register(Board,BoardAdmin)
 admin.site.register(Topic)
 admin.site.register(Post)
+admin.site.register(Photo)
 
