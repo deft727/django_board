@@ -1,7 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.deletion import PROTECT
 from django.urls import reverse
 from django import forms
+
+
+
 
 class Interests(models.Model):
     class Meta:
@@ -17,6 +21,7 @@ class Interests(models.Model):
 
     def __str__(self):
         return self.title
+
 
 class Category(models.Model):
 
@@ -47,6 +52,7 @@ class Bloger(models.Model):
         (STATUS_TRUE,'bloger'),
         (STATUS_FALSE,'isn`t bloger'),
     )
+    avatar = models.ImageField(null=True)
     category = models.ManyToManyField(Category,verbose_name='Категории')
     user = models.ForeignKey(User, verbose_name='блогер', on_delete=models.CASCADE,related_name='bloger')
     username = models.CharField(blank=True, null=True, default=None, max_length=255,  verbose_name='имя')
@@ -62,12 +68,11 @@ class Bloger(models.Model):
     )
 
 
-
 class Reader(models.Model):
     class Meta:
         verbose_name = 'Читатель'
         verbose_name_plural = 'Читатели'
-
+    avatar = models.ImageField(null=True)
     user = models.ForeignKey(User, verbose_name='читатель', on_delete=models.CASCADE)
     username = models.CharField(blank=True, null=True,  max_length=50,  verbose_name='имя')
     is_super = models.BooleanField(default=False)
@@ -75,5 +80,28 @@ class Reader(models.Model):
     interests = models.ManyToManyField(Interests,verbose_name='Интересы')
 
 
+# class AvatarForm(forms.ModelForm):
+#     x = forms.FloatField(widget=forms.HiddenInput())
+#     y = forms.FloatField(widget=forms.HiddenInput())
+#     width = forms.FloatField(widget=forms.HiddenInput())
+#     height = forms.FloatField(widget=forms.HiddenInput())
+
+#     class Meta:
+#         model = Avatar
+#         fields = ('file', 'x', 'y', 'width', 'height', )
 
 
+#     def save(self):
+#         avatar = super(AvatarForm, self).save()
+
+#         x = self.cleaned_data.get('x')
+#         y = self.cleaned_data.get('y')
+#         w = self.cleaned_data.get('width')
+#         h = self.cleaned_data.get('height')
+
+#         image = Image.open(avatar.file)
+#         cropped_image = image.crop((x, y, w+x, h+y))
+#         resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
+#         resized_image.save(avatar.file.path)
+
+#         return avatar

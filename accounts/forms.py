@@ -3,10 +3,40 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.db.models import fields
 from django.forms.widgets import RadioSelect
+from django.http import request
 from django.urls.conf import path
 from .models import *
 from snowpenguin.django.recaptcha2.fields import ReCaptchaField
 from snowpenguin.django.recaptcha2.widgets import ReCaptchaWidget
+from PIL import Image
+
+# class AvatarForm(forms.ModelForm):
+#     x = forms.FloatField(widget=forms.HiddenInput())
+#     y = forms.FloatField(widget=forms.HiddenInput())
+#     width = forms.FloatField(widget=forms.HiddenInput())
+#     height = forms.FloatField(widget=forms.HiddenInput())
+
+#     class Meta:
+#         model = Avatar
+#         fields = ('file', 'x', 'y', 'width', 'height', )
+
+
+#     def save(self):
+#         avatar = super(AvatarForm, self).save()
+
+#         x = self.cleaned_data.get('x')
+#         y = self.cleaned_data.get('y')
+#         w = self.cleaned_data.get('width')
+#         h = self.cleaned_data.get('height')
+
+#         image = Image.open(avatar.file)
+#         cropped_image = image.crop((x, y, w+x, h+y))
+#         resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
+#         resized_image.save(avatar.file.path)
+
+#         return avatar
+
+
 class SignUpFormReader(forms.ModelForm):
 
     confirm_password = forms.CharField(widget=forms.PasswordInput)
@@ -125,23 +155,51 @@ class SignUpFormBloger(forms.ModelForm):
 
 class BlogerForm(forms.ModelForm):
     birthday = forms.DateField(required=False, widget = DateInput())
-    category = forms.ModelMultipleChoiceField(queryset=Category.objects.all(),
-                                                widget=forms.CheckboxSelectMultiple)
+    category = forms.ModelMultipleChoiceField(
+                                                queryset=Category.objects.all(),
+                                                widget=forms.CheckboxSelectMultiple,
+                                                required=False,)
+
+    x = forms.FloatField(widget=forms.HiddenInput())
+    y = forms.FloatField(widget=forms.HiddenInput())
+    width = forms.FloatField(widget=forms.HiddenInput())
+    height = forms.FloatField(widget=forms.HiddenInput())
+
+
+
+
         
     class Meta:
         model = Bloger
         fields = '__all__'
         exclude = ('user','bloger','is_super',)
 
+        # fields = ('file', 'x', 'y', 'width', 'height', )
 
+
+    def save(self):
+        avatar = super(BlogerForm, self).save()
+
+        x = self.cleaned_data.get('x')
+        y = self.cleaned_data.get('y')
+        w = self.cleaned_data.get('width')
+        h = self.cleaned_data.get('height')
+
+        image = Image.open(avatar.file)
+        cropped_image = image.crop((x, y, w+x, h+y))
+        resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
+        resized_image.save(avatar.file.path)
+
+        return avatar
 class ReaderForm(forms.ModelForm):
-    interests = forms.ModelMultipleChoiceField(queryset=Interests.objects.all(),
+    interests = forms.ModelMultipleChoiceField(
+                                                queryset=Interests.objects.all(),
                                                 widget=forms.CheckboxSelectMultiple,
                                                 required=False)
     class Meta:
         model = Reader
         fields = '__all__'
-        exclude = ('user','reader','is_super')
+        exclude = ('user','reader','is_super','avatar')
 
 
 

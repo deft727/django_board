@@ -1,7 +1,10 @@
 from datetime import date
+from decimal import ROUND_UP
 from math import e
 import time
+from django.db.models.expressions import F
 from django.http.response import HttpResponseRedirect
+from django.utils.translation import pgettext
 from xlwt.ExcelMagic import PtgNames
 from accounts.models import Bloger
 from os import name
@@ -33,7 +36,9 @@ from weasyprint import HTML
 from django.db.models.signals import post_save
 from accounts.tasks import send_user_mail_task
 from django.dispatch import receiver
+from django.db import transaction
 
+import json
 
 
 def export_boards_pdf(request, pk):
@@ -119,73 +124,152 @@ def new_articles(request):
     return redirect('home')
 
 
-@login_required
-def new_topic(request, pk):
-    board = get_object_or_404(Board, pk=pk)
-    if request.method == 'POST':
-        form = NewTopicForm(request.POST,  request.FILES)
-        if form.is_valid():
-            topic = form.save(commit=False)
-            topic.board = board
-            topic.starter = request.user
-            topic.save()
-            post = Post.objects.create(
-                message = form.cleaned_data.get('message'),
-                topic = topic,
-                created_by = request.user
-            )
-            photo = Photo.objects.create(
-                file = form.cleaned_data.get('file'),
-                topic = topic
-            )
-            photo.save()
-            data = {'is_valid': True, 'name': photo.file.name, 'url': photo.file.url}  
-        else:
-            form = NewTopicForm()
-            data = {'is_valid': False}
+# @login_required
+# def new_topic(request, pk):
+#     board = get_object_or_404(Board, pk=pk)
+#     if request.method == 'POST':
+#         form = NewTopicForm(request.POST,  request.FILES)
+#         if form.is_valid():
+#             topic = form.save(commit=False)
+#             topic.board = board
+#             topic.starter = request.user
+#             topic.save()
+#             post = Post.objects.create(
+#                 message = form.cleaned_data.get('message'),
+#                 topic = topic,
+#                 created_by = request.user
+#             )
+#             photo = Photo.objects.create(
+#                 file = form.cleaned_data.get('file'),
+#                 topic = topic
+#             )
+#             photo.save()
+#             href = 'true'
+#             data = {'is_valid': True, 'name': photo.file.name, 'url': photo.file.url,}  
+#         else:
+#             form = NewTopicForm()
+#             data = {'is_valid': False}
             
-    return render(request, 'new_topic.html', {'board': board,'form':form})
+#     return render(request, 'new_topic.html', {'board': board,'form':form})
 
 
 class New_topicView(View):
     def get(self,request,pk):
         board = get_object_or_404(Board, pk=pk)
         photos_list = Photo.objects.all()
-        form = NewTopicForm(request.POST, request.FILES or None)
-        return render(request, 'new_topic.html', {'board': board,'form':form,'photos': photos_list})
+        form1 = NewTopicForm(request.POST,request.FILES)
+        return render(request, 'new_topic.html', {'board': board,'form':form1,'photos':None})
 
+
+    @transaction.atomic
     def post(elf,request,pk):
         time.sleep(1)
         board = get_object_or_404(Board, pk=pk)
-        form = NewTopicForm(request.POST, request.FILES)
+        form = NewTopicForm(request.POST,request.FILES)
         if form.is_valid():
-            topic = form.save(commit=False)
-            topic.board = board
-            topic.starter = request.user
-            topic.save()
-            post = Post.objects.create(
-                message = form.cleaned_data.get('message'),
-                topic = topic,
-                created_by = request.user
-            )
-
-            files = request.FILES.getlist('file')
-            for i in files:
-                request.FILES['file'] = i
-                photo = Photo(
-                    title = i.name,
-                    file = i,
-                    topic=topic
+            if not Topic.objects.filter(subject=form.cleaned_data.get('subject'),board=board):
+                topic = Topic.objects.create(
+                    subject=form.cleaned_data.get('subject'),
+                    starter= request.user,
+                    board = board
                 )
-                photo.save()
-
-                
-            print(form.cleaned_data.get('file'))
-            data = {'is_valid': True, 'name': 'czsvzvdf', 'url': 'vzvdfvzdfv'}  
+                Post.objects.create(
+                    message = form.cleaned_data.get('message'),
+                    created_by=request.user,
+                    topic=topic
+                  )
+            else:
+                topic = Topic.objects.get(subject=form.cleaned_data.get('subject'),board=board)
+            files =  request.FILES.getlist('file')
+            if files:
+                for file in files:
+                    photo = Photo(
+                        title = file.name,
+                        file = file,
+                        topic = topic
+                    )
+                    photo.save()
+                data = {'is_valid': True, 'name': photo.title, }  
+                if photo.title==None:
+                    return redirect('board_topics', pk=pk)
+            else:
+                return redirect('board_topics', pk=pk) 
         else:
             form = NewTopicForm()
-            data = {'is_valid': False}
+            data = {'is_valid': False}        
         return JsonResponse(data)
+
+
+
+
+    # def post(elf,request,pk):
+    #     time.sleep(1)
+    #     board = get_object_or_404(Board, pk=pk)
+    #     form1 = NewTopicForm(request.POST)
+    #     form2 = NewPhotoForm(request.FILES)
+    #     if form1.is_valid():
+    #         new_topic = form1.save(commit=False)
+    #         if not Topic.objects.filter(subject=new_topic.subject):
+    #             new_topic.board = board
+    #             new_topic.starter = request.user
+    #             new_topic.save()
+    #     # print(new_topic)
+    #     if form2.is_valid():
+    #         files = request.FILES.getlist('file')
+    #         new_photo = form2.save(commit=False)
+    #         if files:
+    #             for i in files:
+    #                 if i:
+    #                     new_photo.file = i
+    #                     new_photo.title = i.name
+    #                     new_photo.topic = Topic.objects.last()
+    #                     new_photo.save()
+    #         href='true'
+    #         # url = new_photo.url if new_photo.url else None
+    #         data = {'is_valid': True, 'name': new_photo.title, 'href':href}  
+    #         if new_photo.title==None:
+    #             return redirect('board_topics', pk=pk)
+    #     else:
+    #         href='false' 
+    #         form = NewTopicForm()
+    #         data = {'is_valid': False,'href':href}        
+    #     return JsonResponse(data)
+
+
+
+
+
+
+        # if form.is_valid():
+        #     topic = form.save(commit=False,)
+        #     topic.board = board
+        #     topic.starter = request.user
+        #     topic.save()
+
+        #     post = Post.objects.create(
+        #         message = form.cleaned_data.get('message'),
+        #         topic = topic,
+        #         created_by = request.user
+        #     )
+
+            
+        #     files = request.FILES.getlist('file')
+        #     for file in files:
+        #         request.FILES['file'] = file
+        #         photo = NewPhotoForm(request.FILES)
+        #         if photo.is_valid():
+        #             gallery = photo.save(commit=False)
+        #             gallery.topic=topic
+        #             gallery.name=file.name
+        #             gallery.save()
+
+                
+        #     print(form.cleaned_data.get('file'))
+        #     data = {'is_valid': True, 'name': 'asdasd', 'url': 'asdasd'}  
+        # else:
+        #     form = NewTopicForm()
+        #     data = {'is_valid': False}
+        # return JsonResponse(data)
 
 
 

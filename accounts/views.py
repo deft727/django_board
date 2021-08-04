@@ -22,6 +22,7 @@ from django.contrib import messages
 class UserUpdateView(UpdateView):
 
     template_name = 'my_account.html'
+    exclude =('avatar',)
     success_url = reverse_lazy('my_account')
 
 
@@ -30,6 +31,7 @@ class UserUpdateView(UpdateView):
             self.form_class = BlogerForm
         else:
             self.form_class = ReaderForm
+
         return self.form_class
 
 

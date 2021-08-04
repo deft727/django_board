@@ -32,7 +32,6 @@ class Board(models.Model):
             return Post.objects.filter(topic__board=self).order_by('-created_at').first()
 
 
-
 class Photo(models.Model):
     title = models.CharField(max_length=255, blank=True,null=True)
     file = models.FileField(upload_to='photos/')
@@ -54,6 +53,12 @@ class Topic(models.Model):
     def __str__(self):
         return self.subject
 
+    def get_photo(self):
+        return Photo.objects.filter(topic=self).first()
+
+    def get_photos(self):
+        return Photo.objects.filter(topic=self)[1:]
+
     def get_page_count(self):
         count = self.posts.count()
         pages = count / 20
@@ -72,9 +77,6 @@ class Topic(models.Model):
         
     def get_last_ten_posts(self):
         return self.posts.order_by('-created_at')[:10]
-
-
-
 
 
 

@@ -16,7 +16,7 @@ def get_user_status(request):
             bloger = 'False'
     else:
         bloger='False'
-    return bloger 
+    return bloger
 
 
 def create_profile(strategy, details, response, user, *args, **kwargs):
