@@ -27,7 +27,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth import authenticate,login
 from django.template.loader import render_to_string
 from django.http import JsonResponse
-from .utils import get_user_status
+from .utils import get_user_status,get_image
 from django.contrib import messages
 import xlwt
 from django.core.files.storage import FileSystemStorage
@@ -153,16 +153,17 @@ def new_articles(request):
 #     return render(request, 'new_topic.html', {'board': board,'form':form})
 
 
+
 class New_topicView(View):
+
     def get(self,request,pk):
         board = get_object_or_404(Board, pk=pk)
         photos_list = Photo.objects.all()
         form1 = NewTopicForm(request.POST,request.FILES)
         return render(request, 'new_topic.html', {'board': board,'form':form1,'photos':None})
 
-
     @transaction.atomic
-    def post(elf,request,pk):
+    def post(elf,request,pk,images=[]):
         time.sleep(1)
         board = get_object_or_404(Board, pk=pk)
         form = NewTopicForm(request.POST,request.FILES)
@@ -181,98 +182,25 @@ class New_topicView(View):
             else:
                 topic = Topic.objects.get(subject=form.cleaned_data.get('subject'),board=board)
             files =  request.FILES.getlist('file')
-            if files:
-                for file in files:
-                    photo = Photo(
+            for file in images if not files else files:
+                photo = Photo(
                         title = file.name,
                         file = file,
                         topic = topic
                     )
-                    photo.save()
-                data = {'is_valid': True, 'name': photo.title, }  
-                if photo.title==None:
-                    return redirect('board_topics', pk=pk)
-            else:
-                return redirect('board_topics', pk=pk) 
+                photo.save()
+                data = {'is_valid': True, 'name': photo.title,  }
+                # print(photo.file)
+            if not images or not files: 
+                return redirect('board_topics', pk=pk)
+
         else:
-            form = NewTopicForm()
-            data = {'is_valid': False}        
+
+            photo = request.FILES.get('file')
+            # for photos in photo:
+            images.append(get_image(photo))
+            data = {'is_valid': True, 'name': photo.name }
         return JsonResponse(data)
-
-
-
-
-    # def post(elf,request,pk):
-    #     time.sleep(1)
-    #     board = get_object_or_404(Board, pk=pk)
-    #     form1 = NewTopicForm(request.POST)
-    #     form2 = NewPhotoForm(request.FILES)
-    #     if form1.is_valid():
-    #         new_topic = form1.save(commit=False)
-    #         if not Topic.objects.filter(subject=new_topic.subject):
-    #             new_topic.board = board
-    #             new_topic.starter = request.user
-    #             new_topic.save()
-    #     # print(new_topic)
-    #     if form2.is_valid():
-    #         files = request.FILES.getlist('file')
-    #         new_photo = form2.save(commit=False)
-    #         if files:
-    #             for i in files:
-    #                 if i:
-    #                     new_photo.file = i
-    #                     new_photo.title = i.name
-    #                     new_photo.topic = Topic.objects.last()
-    #                     new_photo.save()
-    #         href='true'
-    #         # url = new_photo.url if new_photo.url else None
-    #         data = {'is_valid': True, 'name': new_photo.title, 'href':href}  
-    #         if new_photo.title==None:
-    #             return redirect('board_topics', pk=pk)
-    #     else:
-    #         href='false' 
-    #         form = NewTopicForm()
-    #         data = {'is_valid': False,'href':href}        
-    #     return JsonResponse(data)
-
-
-
-
-
-
-        # if form.is_valid():
-        #     topic = form.save(commit=False,)
-        #     topic.board = board
-        #     topic.starter = request.user
-        #     topic.save()
-
-        #     post = Post.objects.create(
-        #         message = form.cleaned_data.get('message'),
-        #         topic = topic,
-        #         created_by = request.user
-        #     )
-
-            
-        #     files = request.FILES.getlist('file')
-        #     for file in files:
-        #         request.FILES['file'] = file
-        #         photo = NewPhotoForm(request.FILES)
-        #         if photo.is_valid():
-        #             gallery = photo.save(commit=False)
-        #             gallery.topic=topic
-        #             gallery.name=file.name
-        #             gallery.save()
-
-                
-        #     print(form.cleaned_data.get('file'))
-        #     data = {'is_valid': True, 'name': 'asdasd', 'url': 'asdasd'}  
-        # else:
-        #     form = NewTopicForm()
-        #     data = {'is_valid': False}
-        # return JsonResponse(data)
-
-
-
 
 
 @login_required

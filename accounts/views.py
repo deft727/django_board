@@ -27,13 +27,11 @@ class UserUpdateView(UpdateView):
 
 
     def get_form_class(self):
-        if get_user_status(self.request) == 'True':
+        if get_user_status(self.request) is True:
             self.form_class = BlogerForm
         else:
             self.form_class = ReaderForm
-
         return self.form_class
-
 
     def get_object(self):
         try:
@@ -45,7 +43,18 @@ class UserUpdateView(UpdateView):
         form.instance.created_by = self.request.user
         messages.add_message(self.request,messages.SUCCESS,'account has been updated')
         return super().form_valid(form)
- 
+
+
+    def get_context_data(self,**kwargs):
+        context =  super().get_context_data(**kwargs)
+        try:
+            avatar = Bloger.objects.get(user=self.request.user)
+        except :
+            avatar =  Reader.objects.get(user=self.request.user)
+        context['avatar'] = avatar
+        return context
+
+
 
 class ChooseSignup(View):
     def get(self,request,*args,**kwargs):
@@ -56,6 +65,7 @@ class ChooseSignup(View):
 
 
 class RegistrationViewReader(View):
+
     def get(self,request,*args,**kwargs):
         if  request.user.is_authenticated:
             return redirect('home')
@@ -91,7 +101,6 @@ class RegistrationViewReader(View):
 
 class RegistrationViewBloger(View):
 
-
     def get(self,request,*args,**kwargs):
         if  request.user.is_authenticated:
             return redirect('home')
@@ -107,6 +116,7 @@ class RegistrationViewBloger(View):
         if request.method == 'POST':
             form = SignUpFormBloger(request.POST)
             if form.is_valid():
+
                 new_bloger=form.save(commit=False)
                 new_bloger.username=form.cleaned_data['username']
                 new_bloger.email=form.cleaned_data['email']
@@ -133,6 +143,7 @@ class RegistrationViewBloger(View):
 
 
 class LoginView(View):
+
     def get(self,request,*args,**kwargs):
         if  request.user.is_authenticated:
             messages.add_message(request,messages.ERROR,'Вы уже залогинены')

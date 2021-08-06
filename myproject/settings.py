@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'boards',
     'psycopg2',
     'faker',
+    'smartfields',
 
     'snowpenguin.django.recaptcha2',
     'simple_history',
@@ -76,6 +77,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'myproject.urls'

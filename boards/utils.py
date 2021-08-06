@@ -2,20 +2,36 @@ from accounts.models import Bloger,Reader
 from django.contrib.auth.models import User
 from social_django import *
 from social_core import *
-from django.core.mail import send_mail
-from django.contrib import messages
 from .forms import *
+from PIL import Image
+from django.core.files.uploadedfile import InMemoryUploadedFile
+import sys
+from io import BytesIO
+
+
+def get_image(photo):
+        img3=Image.open(photo)
+        new_img3=img3.convert('RGB')
+        res_img3=new_img3.resize((700,450),Image.ANTIALIAS)
+        filestream= BytesIO()
+        file_=res_img3.save(filestream,'JPEG',quality=90)
+        filestream.seek(0)
+        name= '{}.{}'.format(*photo.name.split('.'))
+        photo = InMemoryUploadedFile(
+            filestream,'ImageFiedl',name,'jpeg/image',sys.getsizeof(filestream),  None
+        )
+        return photo
 
 
 def get_user_status(request):
     if request.user.is_authenticated:
         if Bloger.objects.filter(user=request.user).exists():
-            bloger = 'True'
+            bloger = True
             return bloger
         else :
-            bloger = 'False'
+            bloger = False
     else:
-        bloger='False'
+        bloger= False
     return bloger
 
 

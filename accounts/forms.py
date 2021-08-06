@@ -9,6 +9,7 @@ from .models import *
 from snowpenguin.django.recaptcha2.fields import ReCaptchaField
 from snowpenguin.django.recaptcha2.widgets import ReCaptchaWidget
 from PIL import Image
+from django.core.files import File
 
 # class AvatarForm(forms.ModelForm):
 #     x = forms.FloatField(widget=forms.HiddenInput())
@@ -45,7 +46,8 @@ class SignUpFormReader(forms.ModelForm):
     of_age = forms.BooleanField(required=False)
     interests = forms.ModelMultipleChoiceField(queryset=Interests.objects.all(),
                                                 widget=forms.CheckboxSelectMultiple,
-                                                required=False)
+                                                required=False
+                                                )
     captcha = ReCaptchaField(widget=ReCaptchaWidget())
 
     def __init__(self,*args,**kwargs):
@@ -99,7 +101,7 @@ class SignUpFormBloger(forms.ModelForm):
         (STATUS_TRUE,'bloger'),
         (STATUS_FALSE,'isn`t bloger'),
     )
-
+    
     confirm_password = forms.CharField(widget=forms.PasswordInput)
     password=forms.CharField(widget=forms.PasswordInput)
     email = forms.EmailField(required=True)
@@ -107,7 +109,8 @@ class SignUpFormBloger(forms.ModelForm):
     country = forms.CharField(max_length=50)
     category = forms.ModelMultipleChoiceField(queryset=Category.objects.all(),
                                                 widget=forms.CheckboxSelectMultiple,
-                                                required=False)
+                                                required=False
+                                                )
     captcha = ReCaptchaField(widget=ReCaptchaWidget())
     status = forms.ChoiceField(
         choices=STATUS_CHOICES,
@@ -158,8 +161,8 @@ class BlogerForm(forms.ModelForm):
     category = forms.ModelMultipleChoiceField(
                                                 queryset=Category.objects.all(),
                                                 widget=forms.CheckboxSelectMultiple,
-                                                required=False,)
-
+                                                required=False,
+                                                )
     x = forms.FloatField(widget=forms.HiddenInput())
     y = forms.FloatField(widget=forms.HiddenInput())
     width = forms.FloatField(widget=forms.HiddenInput())
@@ -167,40 +170,65 @@ class BlogerForm(forms.ModelForm):
 
 
 
-
         
     class Meta:
         model = Bloger
-        fields = '__all__'
+        fields = ['file', 'x', 'y', 'width', 'height','username','email', 'birthday', 'country','category']
         exclude = ('user','bloger','is_super',)
-
-        # fields = ('file', 'x', 'y', 'width', 'height', )
-
+        widgets = {
+                    'file': forms.FileInput(attrs={
+                        'accept': 'image/*'
+                    })
+                }
 
     def save(self):
-        avatar = super(BlogerForm, self).save()
+        photo = super(BlogerForm, self).save()
 
         x = self.cleaned_data.get('x')
         y = self.cleaned_data.get('y')
         w = self.cleaned_data.get('width')
         h = self.cleaned_data.get('height')
 
-        image = Image.open(avatar.file)
+        image = Image.open(photo.file)
         cropped_image = image.crop((x, y, w+x, h+y))
         resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
-        resized_image.save(avatar.file.path)
+        resized_image.save(photo.file.path)
+        return photo
 
-        return avatar
+
 class ReaderForm(forms.ModelForm):
     interests = forms.ModelMultipleChoiceField(
                                                 queryset=Interests.objects.all(),
                                                 widget=forms.CheckboxSelectMultiple,
                                                 required=False)
+    x = forms.FloatField(widget=forms.HiddenInput())
+    y = forms.FloatField(widget=forms.HiddenInput())
+    width = forms.FloatField(widget=forms.HiddenInput())
+    height = forms.FloatField(widget=forms.HiddenInput())
+
     class Meta:
         model = Reader
-        fields = '__all__'
-        exclude = ('user','reader','is_super','avatar')
+        fields = ['file', 'x', 'y', 'width', 'height','username','of_age', 'interests']
+        exclude = ('user','reader','is_super',)
+        widgets = {
+                    'file': forms.FileInput(attrs={
+                        'accept': 'image/*'
+                    })
+                }
 
+    def save(self):
+        photo = super(ReaderForm, self).save()
+        x = self.cleaned_data.get('x')
+        y = self.cleaned_data.get('y')
+        w = self.cleaned_data.get('width')
+        h = self.cleaned_data.get('height')
+        image = Image.open(photo.file)
+        cropped_image = image.crop((x, y, w+x, h+y))
+        resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
+        
+        resized_image.save(photo.file.path)
+
+        return photo
 
 
 class LoginForm(forms.ModelForm):
@@ -250,3 +278,33 @@ class LoginForm(forms.ModelForm):
 #     class Meta:
 #         model = User
 #         fields = ('username', 'email', 'password1', 'password2')
+
+
+
+
+
+
+# class PhotoForm(forms.ModelForm):
+#     x = forms.FloatField(widget=forms.HiddenInput())
+#     y = forms.FloatField(widget=forms.HiddenInput())
+#     width = forms.FloatField(widget=forms.HiddenInput())
+#     height = forms.FloatField(widget=forms.HiddenInput())
+
+#     class Meta:
+#         model = Avatar
+#         fields = ('avatar', 'x', 'y', 'width', 'height', )
+
+#     def save(self):
+#         avatar = super(PhotoForm, self).save()
+
+#         x = self.cleaned_data.get('x')
+#         y = self.cleaned_data.get('y')
+#         w = self.cleaned_data.get('width')
+#         h = self.cleaned_data.get('height')
+
+#         image = Image.open(avatar.file)
+#         cropped_image = image.crop((x, y, w+x, h+y))
+#         resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
+#         resized_image.save(avatar.file.path)
+
+#         return avatar

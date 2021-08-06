@@ -8,6 +8,15 @@ from django.utils.html import mark_safe
 from markdown import markdown
 from simple_history.models import HistoricalRecords
 import math
+import sys
+from PIL import Image
+import PIL
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from io import BytesIO
+import io
+from django.core.files.base import ContentFile
+from django.core.files import File
+
 
 class Board(models.Model):
     name = models.CharField(max_length=30, unique=True,verbose_name='Доска')
@@ -34,9 +43,41 @@ class Board(models.Model):
 
 class Photo(models.Model):
     title = models.CharField(max_length=255, blank=True,null=True)
-    file = models.FileField(upload_to='photos/')
+    file = models.ImageField(upload_to='photos/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
     topic = models.ForeignKey("Topic",on_delete=models.CASCADE)
+
+
+
+
+            # image1=self.file
+            # if image1 :
+
+            #     img1=Image.open(image1)
+            #     new_img1=img1.convert('RGB')
+            #     res_img1=new_img1.resize((1920,650),Image.ANTIALIAS)
+            #     filestream= BytesIO()
+            #     file_=res_img1.save(filestream,'JPEG',quality=90)
+            #     filestream.seek(0)
+            #     name= '{}.{}'.format(*self.image1.name.split('.'))
+            #     self.image1 = InMemoryUploadedFile(
+            #         filestream,'ImageFiedl',name,'jpeg/image',sys.getsizeof(filestream),  None
+            #     )
+            #     super().save(*args,**kwargs)
+
+    # def save(self,*args,**kwargs):
+    #     b = io.BytesIO()
+    #     image = PIL.Image.open(self.file)
+    #     image.save(b, format='PNG')
+    #     b.seek(0)
+    #     # b.save()
+    #     super().save(*args,**kwargs)
+        # file=self.file
+        # if file :
+        #     rawbytes = file
+        #     im = Image.frombuffer("I;16", (5, 10), rawbytes, "raw", "I;12")
+        #     im.save()
+        #     super().save(*args,**kwargs)
 
 
 class Topic(models.Model):

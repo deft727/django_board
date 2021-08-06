@@ -1,10 +1,9 @@
+from PIL.Image import blend
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.deletion import PROTECT
+from django.db.models.deletion import CASCADE, PROTECT
 from django.urls import reverse
 from django import forms
-
-
 
 
 class Interests(models.Model):
@@ -24,7 +23,6 @@ class Interests(models.Model):
 
 
 class Category(models.Model):
-
     class Meta:
         verbose_name = 'Категории'
         verbose_name_plural = 'Категории'
@@ -52,7 +50,7 @@ class Bloger(models.Model):
         (STATUS_TRUE,'bloger'),
         (STATUS_FALSE,'isn`t bloger'),
     )
-    avatar = models.ImageField(null=True)
+    file = models.ImageField(null=True,blank=True)
     category = models.ManyToManyField(Category,verbose_name='Категории')
     user = models.ForeignKey(User, verbose_name='блогер', on_delete=models.CASCADE,related_name='bloger')
     username = models.CharField(blank=True, null=True, default=None, max_length=255,  verbose_name='имя')
@@ -72,7 +70,8 @@ class Reader(models.Model):
     class Meta:
         verbose_name = 'Читатель'
         verbose_name_plural = 'Читатели'
-    avatar = models.ImageField(null=True)
+        
+    file = models.ImageField(null=True,blank=True)
     user = models.ForeignKey(User, verbose_name='читатель', on_delete=models.CASCADE)
     username = models.CharField(blank=True, null=True,  max_length=50,  verbose_name='имя')
     is_super = models.BooleanField(default=False)
@@ -80,6 +79,9 @@ class Reader(models.Model):
     interests = models.ManyToManyField(Interests,verbose_name='Интересы')
 
 
+# class Avatar(models.Model):
+#     avatar = models.ImageField(upload_to='image/')
+#     user = models.OneToOneField(User,on_delete=PROTECT)
 # class AvatarForm(forms.ModelForm):
 #     x = forms.FloatField(widget=forms.HiddenInput())
 #     y = forms.FloatField(widget=forms.HiddenInput())
