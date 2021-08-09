@@ -14,9 +14,9 @@
 {% endblock %}
 
 {% block content %}
-{%if avatar.file%}
+{%if avatar_image.file%}
 <div class="row" style="margin-top: 20px; margin-left: 10px;">
-  <img alt="Image placeholder " src="{{avatar.file.url}}">
+  <img alt="Image placeholder " src="{{avatar_image.file.url}}">
 <div class="col-sm-4 col-md-3">
   <img src="" class="thumbnail">
 </div>
@@ -68,7 +68,6 @@
   {% block javascript %}
   
   
-  <script src="{% static 'js/jquery-3.1.1.min.js' %}"></script>
   <script src="{% static 'js/bootstrap.min.js' %}"></script>
   <script src="{% static 'js/cropper.min.js' %}"></script>
 

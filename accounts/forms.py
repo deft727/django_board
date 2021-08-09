@@ -163,10 +163,10 @@ class BlogerForm(forms.ModelForm):
                                                 widget=forms.CheckboxSelectMultiple,
                                                 required=False,
                                                 )
-    x = forms.FloatField(widget=forms.HiddenInput())
-    y = forms.FloatField(widget=forms.HiddenInput())
-    width = forms.FloatField(widget=forms.HiddenInput())
-    height = forms.FloatField(widget=forms.HiddenInput())
+    x = forms.FloatField(widget=forms.HiddenInput(),required=False)
+    y = forms.FloatField(widget=forms.HiddenInput(),required=False)
+    width = forms.FloatField(widget=forms.HiddenInput(),required=False)
+    height = forms.FloatField(widget=forms.HiddenInput(),required=False)
 
 
 
@@ -183,17 +183,17 @@ class BlogerForm(forms.ModelForm):
 
     def save(self):
         photo = super(BlogerForm, self).save()
-
         x = self.cleaned_data.get('x')
         y = self.cleaned_data.get('y')
         w = self.cleaned_data.get('width')
         h = self.cleaned_data.get('height')
-
-        image = Image.open(photo.file)
-        cropped_image = image.crop((x, y, w+x, h+y))
-        resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
-        resized_image.save(photo.file.path)
+        if x and y and w and h:
+            image = Image.open(photo.file)
+            cropped_image = image.crop((x, y, w+x, h+y))
+            resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
+            resized_image.save(photo.file.path)
         return photo
+
 
 
 class ReaderForm(forms.ModelForm):
@@ -201,11 +201,10 @@ class ReaderForm(forms.ModelForm):
                                                 queryset=Interests.objects.all(),
                                                 widget=forms.CheckboxSelectMultiple,
                                                 required=False)
-    x = forms.FloatField(widget=forms.HiddenInput())
-    y = forms.FloatField(widget=forms.HiddenInput())
-    width = forms.FloatField(widget=forms.HiddenInput())
-    height = forms.FloatField(widget=forms.HiddenInput())
-
+    x = forms.FloatField(widget=forms.HiddenInput(),required=False)
+    y = forms.FloatField(widget=forms.HiddenInput(),required=False)
+    width = forms.FloatField(widget=forms.HiddenInput(),required=False)
+    height = forms.FloatField(widget=forms.HiddenInput(),required=False)
     class Meta:
         model = Reader
         fields = ['file', 'x', 'y', 'width', 'height','username','of_age', 'interests']
@@ -218,23 +217,23 @@ class ReaderForm(forms.ModelForm):
 
     def save(self):
         photo = super(ReaderForm, self).save()
+
         x = self.cleaned_data.get('x')
         y = self.cleaned_data.get('y')
         w = self.cleaned_data.get('width')
         h = self.cleaned_data.get('height')
-        image = Image.open(photo.file)
-        cropped_image = image.crop((x, y, w+x, h+y))
-        resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
-        
-        resized_image.save(photo.file.path)
-
+        if x and y and w and h:
+            image = Image.open(photo.file)
+            cropped_image = image.crop((x, y, w+x, h+y))
+            resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
+            photo.username = self.cleaned_data.get('username')
+            resized_image.save(photo.file.path)
         return photo
 
 
 class LoginForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
     captcha = ReCaptchaField(widget=ReCaptchaWidget())
-
 
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)

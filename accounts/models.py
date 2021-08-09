@@ -54,7 +54,7 @@ class Bloger(models.Model):
     category = models.ManyToManyField(Category,verbose_name='Категории')
     user = models.ForeignKey(User, verbose_name='блогер', on_delete=models.CASCADE,related_name='bloger')
     username = models.CharField(blank=True, null=True, default=None, max_length=255,  verbose_name='имя')
-    email = models .EmailField(verbose_name='Электороная почта')
+    email = models .EmailField(verbose_name='Электороная почта',null=True)
     birthday = models.DateField(null=True, blank=True,verbose_name='Дата рождения')
     country = models.CharField(null=True, blank=True, default=None, max_length=255,  verbose_name='Город')
     is_super = models.BooleanField(default=True)
@@ -76,7 +76,7 @@ class Reader(models.Model):
     username = models.CharField(blank=True, null=True,  max_length=50,  verbose_name='имя')
     is_super = models.BooleanField(default=False)
     of_age = models.BooleanField(default=False,null=True,blank=True)
-    interests = models.ManyToManyField(Interests,verbose_name='Интересы')
+    interests = models.ManyToManyField(Interests,verbose_name='Интересы', blank=True)
 
 
 # class Avatar(models.Model):
@@ -95,15 +95,12 @@ class Reader(models.Model):
 
 #     def save(self):
 #         avatar = super(AvatarForm, self).save()
-
 #         x = self.cleaned_data.get('x')
 #         y = self.cleaned_data.get('y')
 #         w = self.cleaned_data.get('width')
 #         h = self.cleaned_data.get('height')
-
 #         image = Image.open(avatar.file)
 #         cropped_image = image.crop((x, y, w+x, h+y))
 #         resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
 #         resized_image.save(avatar.file.path)
-
 #         return avatar

@@ -6,7 +6,7 @@ from django.db.models.expressions import F
 from django.http.response import HttpResponseRedirect
 from django.utils.translation import pgettext
 from xlwt.ExcelMagic import PtgNames
-from accounts.models import Bloger
+from accounts.models import Bloger,Reader
 from os import name
 from django.core.checks import messages
 from django.urls.conf import path
@@ -19,9 +19,8 @@ from django.http import HttpResponse
 from .models import Board, Photo, Topic , Post
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.views.generic import View,CreateView,DateDetailView,ListView,UpdateView
+from django.views.generic import View,CreateView,ListView,UpdateView
 from django.urls import reverse_lazy,reverse
-from django.views.generic import CreateView
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.contrib.auth import authenticate,login
@@ -163,7 +162,7 @@ class New_topicView(View):
         return render(request, 'new_topic.html', {'board': board,'form':form1,'photos':None})
 
     @transaction.atomic
-    def post(elf,request,pk,images=[]):
+    def post(self,request,pk,images=[]):
         time.sleep(1)
         board = get_object_or_404(Board, pk=pk)
         form = NewTopicForm(request.POST,request.FILES)
@@ -202,13 +201,22 @@ class New_topicView(View):
             data = {'is_valid': True, 'name': photo.name }
         return JsonResponse(data)
 
+class Reply_topicView(View):
+    
+    def get(self,request, pk, topic_pk):
+        topic = get_object_or_404(Topic, board__pk=pk, pk=topic_pk)
+        form = PostForm()
+        context = {
+            'topic':topic,
+            'form':form,  
+        }
+        return render(request, 'reply_topic.html',context)
 
-@login_required
-def reply_topic(request, pk, topic_pk):
-    topic = get_object_or_404(Topic, board__pk=pk, pk=topic_pk)
-    if request.method == 'POST':
+    def post(self,request, pk, topic_pk):
+        topic = get_object_or_404(Topic, board__pk=pk, pk=topic_pk)
         form = PostForm(request.POST)
         if form.is_valid():
+
             post = form.save(commit=False)
             post.topic = topic
             post.created_by = request.user
@@ -219,10 +227,35 @@ def reply_topic(request, pk, topic_pk):
             page = topic.get_page_count()
             topic_post_url = f'{topic_url}?page={page}'
             return redirect(topic_post_url)
+
+        else:
+            context = {
+            'topic':topic,
+            'form':form,}
+            return render(request, 'reply_topic.html',context)
+
+
+
+# @login_required
+# def reply_topic(request, pk, topic_pk):
+#     topic = get_object_or_404(Topic, board__pk=pk, pk=topic_pk)
+#     if request.method == 'POST':
+#         form = PostForm(request.POST)
+#         if form.is_valid():
+#             post = form.save(commit=False)
+#             post.topic = topic
+#             post.created_by = request.user
+#             post.save()
+#             topic.last_updated = timezone.now()
+#             topic.save()
+#             topic_url = reverse('topic_posts', kwargs={'pk': pk, 'topic_pk': topic_pk})
+#             page = topic.get_page_count()
+#             topic_post_url = f'{topic_url}?page={page}'
+#             return redirect(topic_post_url)
             
-    else:
-        form = PostForm()
-    return render(request, 'reply_topic.html', {'topic': topic, 'form': form})
+#     else:
+#         form = PostForm()
+#     return render(request, 'reply_topic.html', {'topic': topic, 'form': form})
 
 
 class BoardListView(ListView):
@@ -236,6 +269,7 @@ class BoardListView(ListView):
         context = super().get_context_data(**kwargs)
         context['bloger'] = get_user_status(self.request)
         context['history'] = Board.history.all()[:10]
+        context['boards'] = Board.objects.filter(is_activ=True)
         return context
 
 
@@ -248,6 +282,11 @@ class TopicListView(ListView):
 
     def get_context_data(self, **kwargs):
         kwargs['board'] = self.board
+        try:
+            avatar = Bloger.objects.get(user=self.request.user)
+        except :
+            avatar =  Reader.objects.get(user=self.request.user)
+        kwargs['avatar'] = avatar
         return super().get_context_data(**kwargs)
 
     def get_queryset(self):

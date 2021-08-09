@@ -18,13 +18,12 @@ from django.conf import settings
 # from boards.utils import send_user_mail
 from django.contrib import messages
 
+
 @method_decorator(login_required, name='dispatch')
 class UserUpdateView(UpdateView):
 
     template_name = 'my_account.html'
-    exclude =('avatar',)
     success_url = reverse_lazy('my_account')
-
 
     def get_form_class(self):
         if get_user_status(self.request) is True:
@@ -44,16 +43,9 @@ class UserUpdateView(UpdateView):
         messages.add_message(self.request,messages.SUCCESS,'account has been updated')
         return super().form_valid(form)
 
-
-    def get_context_data(self,**kwargs):
-        context =  super().get_context_data(**kwargs)
-        try:
-            avatar = Bloger.objects.get(user=self.request.user)
-        except :
-            avatar =  Reader.objects.get(user=self.request.user)
-        context['avatar'] = avatar
-        return context
-
+    def form_invalid(self, form):
+        print('jiijij')
+        return super().form_invalid(form)
 
 
 class ChooseSignup(View):
@@ -61,7 +53,6 @@ class ChooseSignup(View):
         if  request.user.is_authenticated:
             return redirect('home')
         return render(request, 'choose_signup.html')
-
 
 
 class RegistrationViewReader(View):

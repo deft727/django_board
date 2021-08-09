@@ -22,6 +22,7 @@ class Board(models.Model):
     name = models.CharField(max_length=30, unique=True,verbose_name='Доска')
     description = models.CharField(max_length=100,verbose_name='Описание')
     history = HistoricalRecords()
+    is_activ = models.BooleanField(default=True,null=True,blank=True)
 
     class Meta:
         verbose_name ='Доска'
@@ -47,23 +48,7 @@ class Photo(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
     topic = models.ForeignKey("Topic",on_delete=models.CASCADE)
 
-
-
-
-            # image1=self.file
-            # if image1 :
-
-            #     img1=Image.open(image1)
-            #     new_img1=img1.convert('RGB')
-            #     res_img1=new_img1.resize((1920,650),Image.ANTIALIAS)
-            #     filestream= BytesIO()
-            #     file_=res_img1.save(filestream,'JPEG',quality=90)
-            #     filestream.seek(0)
-            #     name= '{}.{}'.format(*self.image1.name.split('.'))
-            #     self.image1 = InMemoryUploadedFile(
-            #         filestream,'ImageFiedl',name,'jpeg/image',sys.getsizeof(filestream),  None
-            #     )
-            #     super().save(*args,**kwargs)
+    
 
     # def save(self,*args,**kwargs):
     #     b = io.BytesIO()
@@ -81,7 +66,6 @@ class Photo(models.Model):
 
 
 class Topic(models.Model):
-    # photo = models.ForeignKey(Photo,blank=True,on_delete=CASCADE)
     subject = models.CharField(max_length=255,verbose_name='Тема')
     last_updated = models.DateTimeField(auto_now_add=True)
     board = models.ForeignKey(Board,on_delete=models.CASCADE)

@@ -7,7 +7,7 @@ urlpatterns = [
         path('topics/<int:pk>/', TopicListView.as_view(), name='board_topics'),
         path('boards/<int:pk>/new/', New_topicView.as_view(), name='new_topic' ,),
         path('boards/<int:pk>/topics/<int:topic_pk>/', PostListView.as_view(), name='topic_posts'),
-        path('boards/<int:pk>/topics/<int:topic_pk>/reply/',reply_topic, name='reply_topic'),
+        path('boards/<int:pk>/topics/<int:topic_pk>/reply/',Reply_topicView.as_view(), name='reply_topic'),
 ######################################################################################################################
         path('boards/<int:pk>/topics/<int:topic_pk>/posts/<int:post_pk>/', PostUpdateView.as_view(), name='edit_post'),
         path('new_articles/',new_articles,name='new_articles'),

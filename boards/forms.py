@@ -50,6 +50,6 @@ class PostForm(forms.ModelForm):
 class BoardForm(forms.ModelForm):
     class Meta:
         model = Board
-        fields = '__all__'       
+        fields = '__all__'
 
 
