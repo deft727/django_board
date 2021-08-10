@@ -11,9 +11,9 @@ from django.views.generic import UpdateView,View
 from .models import *
 from django.contrib import messages
 from boards.urls import get_user_status
-import urllib
-import urllib.request as urllib2
-import json
+# import urllib
+# import urllib.request as urllib2
+# import json
 from django.conf import settings
 # from boards.utils import send_user_mail
 from django.contrib import messages
@@ -33,9 +33,9 @@ class UserUpdateView(UpdateView):
         return self.form_class
 
     def get_object(self):
-        try:
+        if get_user_status(self.request) is True:
             return Bloger.objects.get(user=self.request.user)
-        except :
+        else:
             return Reader.objects.get(user=self.request.user)
             
     def form_valid(self, form):

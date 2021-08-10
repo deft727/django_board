@@ -1,5 +1,5 @@
 from accounts.models import Bloger,Reader
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from social_django import *
 from social_core import *
 from .forms import *

@@ -1,15 +1,15 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+# from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.db.models import fields
-from django.forms.widgets import RadioSelect
-from django.http import request
+# from django.db.models import fields
+# from django.forms.widgets import RadioSelect
+# from django.http import request
 from django.urls.conf import path
 from .models import *
 from snowpenguin.django.recaptcha2.fields import ReCaptchaField
 from snowpenguin.django.recaptcha2.widgets import ReCaptchaWidget
 from PIL import Image
-from django.core.files import File
+# from django.core.files import File
 
 # class AvatarForm(forms.ModelForm):
 #     x = forms.FloatField(widget=forms.HiddenInput())
@@ -214,6 +214,7 @@ class ReaderForm(forms.ModelForm):
                         'accept': 'image/*'
                     })
                 }
+
 
     def save(self):
         photo = super(ReaderForm, self).save()

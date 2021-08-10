@@ -268,3 +268,5 @@ EMAIL_HOST_USER = 'test.blogodvich@gmail.com'
 EMAIL_HOST_PASSWORD = 'Kirill99'
 EMAIL_PORT = 587
 EMAIL_HOST_PASSWORD ='nzsietbzmayagzfa'
+
+

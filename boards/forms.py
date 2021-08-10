@@ -1,8 +1,8 @@
 from django import forms
-from django.forms import fields
-from django.http import request
-from .models import Topic,Post,Board,Photo
-
+# from django.forms import fields
+# from django.http import request
+from .models import Post,Board
+# Photo,Topic
 class NewTopicForm(forms.Form):
     subject = forms.CharField(max_length=100)
     message = forms.CharField(
@@ -11,34 +11,15 @@ class NewTopicForm(forms.Form):
         ),
         max_length=4000,
         help_text='Max length is 4000')
-    # file = forms.FileField(widget=forms.FileInput(attrs={'multiple': True}))
 
     file = forms.FileField(required=False,widget=forms.ClearableFileInput(attrs={
         'multiple': True,
         'class':'js-upload-photos',
         'id':'fileupload',
-        # 'style':'display: none',
-        # 'data-url':"{% url 'new_topic' board.pk %}",
-        # 'data-form-data':'{"csrfmiddlewaretoken": "{{ csrf_token }}"}'
         }))
     
     class Meta:
         fields =('subject','message','file')
-
-# class NewPhotoForm(forms.Form):
-#     file = forms.FileField(required=False,widget=forms.ClearableFileInput(attrs={
-#         'multiple': True,
-#         'class':'js-upload-photos',
-#         'id':'fileupload',
-#         # 'style':'display: none',
-#         # 'data-url':"{% url 'new_topic' board.pk %}",
-#         # 'data-form-data':'{"csrfmiddlewaretoken": "{{ csrf_token }}"}'
-#         }))
-#     # name = forms.CharField(required=False)
-
-
-    
-
 
 
 class PostForm(forms.ModelForm):

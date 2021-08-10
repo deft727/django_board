@@ -3,23 +3,23 @@ from decimal import ROUND_UP
 from math import e
 import time
 from django.db.models.expressions import F
-from django.http.response import HttpResponseRedirect
-from django.utils.translation import pgettext
-from xlwt.ExcelMagic import PtgNames
-from accounts.models import Bloger,Reader
-from os import name
+# from django.http.response import HttpResponseRedirect
+# from django.utils.translation import pgettext
+# from xlwt.ExcelMagic import PtgNames
+# from accounts.models import Bloger,Reader
+# from os import name
 from django.core.checks import messages
 from django.urls.conf import path
 from .forms import NewTopicForm,PostForm,BoardForm
 from django.shortcuts import render, get_object_or_404,redirect
-from django.http import Http404, request
-from django.db.models import Count, fields
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponse
+# from django.http import Http404, request
+from django.db.models import Count
+# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+# from django.http import HttpResponse
 from .models import Board, Photo, Topic , Post
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.views.generic import View,CreateView,ListView,UpdateView
+from django.views.generic import View,ListView,UpdateView
 from django.urls import reverse_lazy,reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -28,10 +28,7 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 from .utils import get_user_status,get_image
 from django.contrib import messages
-import xlwt
-from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse, HttpResponseNotFound
-from weasyprint import HTML
 from django.db.models.signals import post_save
 from accounts.tasks import send_user_mail_task
 from django.dispatch import receiver
@@ -40,63 +37,7 @@ from django.db import transaction
 import json
 
 
-def export_boards_pdf(request, pk):
-    board = Board.objects.get(pk=pk)
-    topics = board.topic_set.all()
-    if len(topics)>1:
-        html_string = render_to_string(
-            'topic_posts_to_pdf.html', { 'topics': topics, 'board': board})
 
-        html = HTML(string=html_string)
-        html.write_pdf(target='/tmp/TopicsPdf.pdf')
-
-        fs = FileSystemStorage('/tmp')
-        with fs.open('mypdf.pdf') as pdf:
-            response = HttpResponse(pdf, content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename="mypdf.pdf"'
-            return response
-    else:
-        messages.add_message(request,messages.ERROR,'Nothing import top pdf')
-        try:
-            return redirect(request.META.get('HTTP_REFERER','redirect_if_referer_not_found'))
-        except:
-            return redirect('home')
-
-
-def export_boards_xls(request,pk):
-    response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="TopicsXml.xls"'
-
-    wb = xlwt.Workbook(encoding='utf-8')
-    ws = wb.add_sheet('Topics')
-
-    row_num = 0
-
-    font_style = xlwt.XFStyle()
-    font_style.font.bold = True
-
-    columns = ['subject', 'board','starter'  ]
-
-    for col_num in range(len(columns)):
-        ws.write(row_num, col_num, columns[col_num], font_style)
-
-    font_style = xlwt.XFStyle()
-
-    rows = Board.objects.get(pk=pk).topic_set.all().values_list('subject', 'board','starter')
-    if len(rows)>1:
-        for row in rows:
-            row_num += 1
-            for col_num in range(len(row)):
-                ws.write(row_num, col_num, row[col_num], font_style)
-
-        wb.save(response)
-        return response
-    else:
-        messages.add_message(request,messages.ERROR,'Nothing import to xls')
-        try:
-            return redirect(request.META.get('HTTP_REFERER','redirect_if_referer_not_found'))
-        except:
-            return redirect('home')
 
 
 def new_articles(request):
@@ -269,7 +210,8 @@ class BoardListView(ListView):
         context = super().get_context_data(**kwargs)
         context['bloger'] = get_user_status(self.request)
         context['history'] = Board.history.all()[:10]
-        context['boards'] = Board.objects.filter(is_activ=True)
+        context['boards'] = Board.objects.filter(is_activ=True).prefetch_related('topic_set')
+        # context['post'] = 
         return context
 
 
@@ -282,11 +224,6 @@ class TopicListView(ListView):
 
     def get_context_data(self, **kwargs):
         kwargs['board'] = self.board
-        try:
-            avatar = Bloger.objects.get(user=self.request.user)
-        except :
-            avatar =  Reader.objects.get(user=self.request.user)
-        kwargs['avatar'] = avatar
         return super().get_context_data(**kwargs)
 
     def get_queryset(self):

@@ -8,14 +8,14 @@ from django.utils.html import mark_safe
 from markdown import markdown
 from simple_history.models import HistoricalRecords
 import math
-import sys
-from PIL import Image
-import PIL
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from io import BytesIO
-import io
-from django.core.files.base import ContentFile
-from django.core.files import File
+# import sys
+# from PIL import Image
+# import PIL
+# from django.core.files.uploadedfile import InMemoryUploadedFile
+# from io import BytesIO
+# import io
+# from django.core.files.base import ContentFile
+# from django.core.files import File
 
 
 class Board(models.Model):
@@ -123,6 +123,3 @@ class Post(models.Model):
 
     def get_message_as_markdown(self):
         return mark_safe(markdown(self.message, safe_mode='escape'))
-
-
-    
