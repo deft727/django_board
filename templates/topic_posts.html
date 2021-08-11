@@ -64,11 +64,12 @@
             <small>Posts: {{ post.created_by.posts.count }}</small>
           </div>
 
+
           
           <div class="col-10">
             <div class="row mb-3">
               <div class="col-6">
-                <strong class="text-muted">{{ post.created_by.username }}</strong>
+              <a href="{% url 'profile' post.created_by.pk %}"><strong class="text-muted">{{ post.created_by.username }}</strong></a>  
               </div>
               <div class="col-6 text-right">
                 <small class="text-muted">{{ post.created_at }}</small>

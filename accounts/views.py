@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import UpdateView,View
+from django.views.generic import UpdateView,View,DetailView
 from .models import *
 from django.contrib import messages
 from boards.urls import get_user_status
@@ -132,7 +132,6 @@ class RegistrationViewBloger(View):
         return render(request, 'signup.html', {'form': form})
 
 
-
 class LoginView(View):
 
     def get(self,request,*args,**kwargs):
@@ -163,3 +162,26 @@ class LoginView(View):
             return HttpResponseRedirect('/')
         context={'form':form,}
         return render(request,'login.html',context)
+
+
+
+class ProfileView(DetailView):
+
+    template_name='profile.html'
+    allow_empty=False
+    model= User
+
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+
+        if self.get_object().bloger.get_queryset():
+            profile = self.get_object().bloger.get_queryset()
+            status = True
+        else:
+            profile = self.get_object().reader.get_queryset()
+            status = False
+
+        context['status'] = status
+        context['profile'] = profile
+        context['title'] = f'Profile {self.get_object().username}'
+        return context

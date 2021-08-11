@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{title}}{% endblock %}
+
+{% block stylesheet %}
+<link href="{% static 'css/cropper.min.css' %}" rel="stylesheet">
+<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active">Profile View</li>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6">
+            <div class="well well-sm">
+                <div class="row">
+                        {%if profile%}
+                    {%if status%}
+                        {% for i in profile %}
+                    <div class="col-sm-6 col-md-4">
+                        <img src="{{i.file.url}}" alt="" class="img-rounded img-responsive " />
+                    </div>
+                    <div class="col-sm-6 col-md-8 mr-5">
+                        <h4>
+                            username: {{i.username}}</h4>
+                        <small><cite title="{{i.country}}">country: {{i.country}}<i class="glyphicon glyphicon-map-marker">
+                        </i></cite></small>
+                        <p>
+                            <a href="mailto: {{i.email}}"><i class="glyphicon glyphicon-envelope"></i>email: {{i.email}}</a>
+                            <br />
+                            <br />
+                            <i class="glyphicon glyphicon-gift"></i>birthday: {{i.birthday}}</p>
+                            {%endfor%}
+
+                    {%else%}
+
+                            {% for i in profile %}
+                            <div class="col-sm-6 col-md-4">
+                                <img src="{{i.file.url}}" alt="" class="img-rounded img-responsive " />
+                            </div>
+                            <div class="col-sm-6 col-md-8 mr-5">
+                                <h4>
+                                    username: {{i.username}}</h4>
+                                <small><cite title="{{i.country}}">{{i.username}}<i class="glyphicon glyphicon-map-marker">
+                                    {%endfor%}    
+                        {%endif%}
+
+                    {%else%}
+                    <h2>NOTHING</h2>
+                    {%endif%}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</div>
+</div>
+
+
+{% endblock %}

@@ -84,6 +84,10 @@ class SignUpFormReader(forms.ModelForm):
         return of_age
 
     def clean(self):
+        try :
+            self.cleaned_data['password'] and self.cleaned_data['confirm_password']
+        except:
+            raise forms.ValidationError('Введите пароль')
         password = self.cleaned_data['password']
         confirm_password= self.cleaned_data['confirm_password']
         if password != confirm_password:
@@ -102,8 +106,8 @@ class SignUpFormBloger(forms.ModelForm):
         (STATUS_FALSE,'isn`t bloger'),
     )
     
-    confirm_password = forms.CharField(widget=forms.PasswordInput)
-    password=forms.CharField(widget=forms.PasswordInput)
+    confirm_password = forms.CharField(widget=forms.PasswordInput,required=True)
+    password=forms.CharField(widget=forms.PasswordInput,required=True)
     email = forms.EmailField(required=True)
     birthday = forms.DateField(required=False, widget = DateInput())
     country = forms.CharField(max_length=50)
@@ -148,6 +152,11 @@ class SignUpFormBloger(forms.ModelForm):
 
 
     def clean(self):
+        try :
+            self.cleaned_data['password'] and self.cleaned_data['confirm_password']
+        except:
+            raise forms.ValidationError('Введите пароль')
+
         password = self.cleaned_data['password']
         confirm_password= self.cleaned_data['confirm_password']
         if password != confirm_password:

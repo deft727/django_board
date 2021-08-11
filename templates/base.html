@@ -40,7 +40,7 @@
         </li>
         {%endif%}
           <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{ user.username }}
+            {{ request.user.username }}
           </a>
           {%endif%}
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu"{% if avatar_image.file %}style="margin-right: 300px;"{%endif%}>

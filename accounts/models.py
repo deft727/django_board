@@ -70,7 +70,7 @@ class Reader(models.Model):
         verbose_name_plural = 'Читатели'
         
     file = models.ImageField(null=True,blank=True,upload_to='avatar/')
-    user = models.ForeignKey(User, verbose_name='читатель', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, verbose_name='читатель',related_name='reader', on_delete=models.CASCADE)
     username = models.CharField(blank=True, null=True,  max_length=50,  verbose_name='имя')
     is_super = models.BooleanField(default=False)
     of_age = models.BooleanField(default=False,null=True,blank=True)
