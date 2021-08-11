@@ -104,7 +104,6 @@ class Topic(models.Model):
         return self.posts.order_by('-created_at')[:10]
 
 
-
 class Post(models.Model):
     message = models.TextField(max_length=4000,help_text='Макс. кол-во символов 4000',verbose_name='Сообщение')
     topic = models.ForeignKey(Topic, related_name='posts',on_delete=models.CASCADE)

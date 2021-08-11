@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles',    
     'django.contrib.humanize',
     'widget_tweaks',
     'crispy_forms',
@@ -77,8 +77,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
-    
 ]
+
+
+
+
 
 ROOT_URLCONF = 'myproject.urls'
 

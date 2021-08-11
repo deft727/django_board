@@ -93,7 +93,7 @@ def new_articles(request):
 #     return render(request, 'new_topic.html', {'board': board,'form':form})
 
 
-
+@method_decorator(login_required, name='dispatch')
 class New_topicView(View):
 
     def get(self,request,pk):
@@ -142,6 +142,8 @@ class New_topicView(View):
             data = {'is_valid': True, 'name': photo.name }
         return JsonResponse(data)
 
+
+@method_decorator(login_required, name='dispatch')
 class Reply_topicView(View):
     
     def get(self,request, pk, topic_pk):
@@ -211,7 +213,6 @@ class BoardListView(ListView):
         context['bloger'] = get_user_status(self.request)
         context['history'] = Board.history.all()[:10]
         context['boards'] = Board.objects.filter(is_activ=True).prefetch_related('topic_set')
-        # context['post'] = 
         return context
 
 
@@ -280,8 +281,8 @@ class PostUpdateView(UpdateView):
         return redirect('topic_posts', pk=post.topic.board.pk, topic_pk=post.topic.pk)
 
 
+@login_required
 def board_create(request):
-
     data = dict()
     if request.method == 'POST':
         form = BoardForm(request.POST)
@@ -306,6 +307,7 @@ def board_create(request):
     return JsonResponse(data)
 
 
+@login_required
 def board_update(request,pk):
     board = get_object_or_404(Board, pk=pk)
     if request.method == 'POST':
@@ -333,7 +335,7 @@ def save_board_form(request, form, template_name):
     return JsonResponse(data)
 
 
-
+@login_required
 def board_delete(request, pk):
     board = get_object_or_404(Board, pk=pk)
     data = dict()
