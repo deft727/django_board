@@ -92,13 +92,29 @@ def new_articles(request):
             
 #     return render(request, 'new_topic.html', {'board': board,'form':form})
 
+# def photo_delete(request, pk):
+#     board = get_object_or_404(Photo, pk=pk)
+#     data = dict()
+#     boards = Board.objects.all()
+#     form1 = NewTopicForm(request.POST,request.FILES)
+
+#     if request.method == 'POST':
+#         board.delete()
+#         data['form_is_valid'] = True
+#         data['html_partial_board'] = render_to_string('new_topic.html',  'new_topic.html', {'board': board,'form':form1,'photos':None})
+#     else:
+#         context = {'board': board}
+#         data['html_form'] = render_to_string('./includes/board_form_delete.html',
+#             context,
+#             request=request,
+#         )
+#     return JsonResponse(data)
 
 @method_decorator(login_required, name='dispatch')
 class New_topicView(View):
 
     def get(self,request,pk):
         board = get_object_or_404(Board, pk=pk)
-        photos_list = Photo.objects.all()
         form1 = NewTopicForm(request.POST,request.FILES)
         return render(request, 'new_topic.html', {'board': board,'form':form1,'photos':None})
 
@@ -122,6 +138,7 @@ class New_topicView(View):
             else:
                 topic = Topic.objects.get(subject=form.cleaned_data.get('subject'),board=board)
             files =  request.FILES.getlist('file')
+            
             for file in images if not files else files:
                 photo = Photo(
                         title = file.name,
@@ -129,15 +146,12 @@ class New_topicView(View):
                         topic = topic
                     )
                 photo.save()
-                data = {'is_valid': True, 'name': photo.title,  }
-                # print(photo.file)
-            if not images or not files: 
+                data = {'is_valid': True, 'name': photo.title }
+
+            if not files:
                 return redirect('board_topics', pk=pk)
-
         else:
-
             photo = request.FILES.get('file')
-            # for photos in photo:
             images.append(get_image(photo))
             data = {'is_valid': True, 'name': photo.name }
         return JsonResponse(data)
@@ -357,3 +371,6 @@ def board_delete(request, pk):
             request=request,
         )
     return JsonResponse(data)
+
+
+

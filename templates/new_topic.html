@@ -17,97 +17,16 @@
 
 {% block content %}
 
-{%comment%}
-<form method="post" novalidate>
-    {% csrf_token %}
-    {% for field in form %}
-      <div class="form-group">
-        {{ field.label_tag }}
-        {% if form.is_bound %}
-          {% if field.errors %}
-            {% render_field field class="form-control is-invalid" %}
-            {% for error in field.errors %}
-              <div class="invalid-feedback">
-                {{ error }}
-              </div>
-            {% endfor %}
-          {% else %}
-            {% render_field field class="form-control is-valid" %}
-          {% endif %}
-        {% else %}
-          {% render_field field class="form-control" %}
-        {% endif %}
-        {% if field.help_text %}
-          <small class="form-text text-muted">
-            {{ field.help_text }}
-          </small>
-        {% endif %}
-      </div>
-    {% endfor %}
-    <button type="submit" class="btn btn-success">Post</button>
-  </form>
-{%endcomment%}
+<div class="border border-secondary" style="padding: 5px;">
 
-
-
-<div style="margin-bottom: 20px;">
+<div  style="margin-bottom: 20px;">
 <form method="POST"  enctype="multipart/form-data">
 
   {% csrf_token %}
 
   {% include 'includes/form.html' %}
 
-  {%comment%}
-
-  {% for field in form1 %}
-  <div class="form-group">
-    {{ field.label_tag }}
-    {% if form1.is_bound %}
-      {% if field.errors %}
-        {% render_field field class="form-control is-invalid" %}
-        {% for error in field.errors %}
-          <div class="invalid-feedback">
-            {{ error }}
-          </div>
-        {% endfor %}
-      {% else %}
-        {% render_field field class="form-control is-valid" %}
-      {% endif %}
-    {% else %}
-      {% render_field field class="form-control" %}
-    {% endif %}
-    {% if field.help_text %}
-      <small class="form-text text-muted">
-        {{ field.help_text }}
-      </small>
-    {% endif %}
-  </div>
-{% endfor %}
-                  {% for field in form2 %}
-                  <div class="form-group">
-                    {{ field.label_tag }}
-                    {% if form2.is_bound %}
-                      {% if field.errors %}
-                        {% render_field field class="form-control is-invalid" %}
-                        {% for error in field.errors %}
-                          <div class="invalid-feedback">
-                            {{ error }}
-                          </div>
-                        {% endfor %}
-                      {% else %}
-                        {% render_field field class="form-control is-valid" %}
-                      {% endif %}
-                    {% else %}
-                      {% render_field field class="form-control" %}
-                    {% endif %}
-                    {% if field.help_text %}
-                      <small class="form-text text-muted">
-                        {{ field.help_text }}
-                      </small>
-                    {% endif %}
-                  </div>
-                  {% endfor %}
-                  {%endcomment%}
+  
 
   <!-- <button type="button" class="btn btn-primary js-upload-photos">
     <span class="glyphicon glyphicon-cloud-upload"></span> Upload photos
@@ -115,7 +34,7 @@
 
 
 </div>
-<button type="submit" class="btn btn-success mb-5">POST</button>
+<button type="submit" class="btn btn-success mb-5" >POST</button>
 </form>
 <table id="gallery" class="table table-bordered ">
   <thead>
@@ -124,12 +43,9 @@
     </tr>
   </thead>
   <tbody>
-    {% for photo in photos %}
-      <tr>
-        <td>
-        <img src="{{ photo.file.url }}" alt="{{ photo.file.name }}" >  <a href="{{ photo.file.url }}">{{ photo.file.name }}</a></td>
-      </tr>
-    {% endfor %}
+
+
+
   </tbody>
 </table>
 
@@ -146,6 +62,8 @@
       </div>
     </div>
   </div>
+</div>
+
 </div>
 {% endblock %}
 

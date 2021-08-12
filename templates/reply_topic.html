@@ -22,6 +22,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="border border-secondary" style="padding: 5px;">
 
   <form method="post" class="mb-4" novalidate>
     {% csrf_token %}
@@ -43,6 +44,8 @@
         {{ post.get_message_as_markdown }}
       </div>
     </div>
+  </div>
+
   {% endfor %}
 
 {% endblock %}

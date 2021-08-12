@@ -13,7 +13,7 @@
 
 
 {% block content %}
-<div class="infinite-container">
+<div class="infinite-container mb-2">
 
 <div class="mb-4">
   <a href="{% url 'new_topic' board.pk %}" class="btn btn-primary">New topic</a>
@@ -24,6 +24,7 @@
 
 </div>
 
+{%if topics%}
 
 <table class="table table-striped mb-4">
   <thead class="thead-inverse">
@@ -60,9 +61,18 @@
         <td class="align-middle">{{ topic.last_updated|naturaltime }}</td>
       </tr>
     {% endfor %}
+
     </div>
   </tbody>
 </table>
+{%else%}
+<div class="card" style="width:100%;">
+  <img style="width: 550px;  padding-left: 400px;" src="https://lh3.googleusercontent.com/proxy/W278B1yoNvMcoTqU14zq7ZQoXfUpfLzSXvFUS3N85-QDOKtW0KelgErfbIMkSXrFPWFrr5z91-87nNkU4-6fpNCI2VmHonVvahUcJfCBJwNe31CIRMgmhTOjzBOcAneWMZEyuchU9t-Ioi91u_Exfeov0nMcwi0-HFJRjn3UqAWoh17L8O4tYrvs88FlgFBUSRCgijHNp_Jxc6kUNrOF1VBQxdP8KKX97ThwfpGhktl8K_EoVZVLKbVm1FefvvwFxUsB7zaa" class="card-img-top ml-5" alt="...">
+  <div class="card-body">
+    <p class="card-text" style="font-size: 20px;">no topics.</p>
+  </div>
+</div>
+{%endif%}
 </div>
 
 {%include 'includes/pagination.html'%}

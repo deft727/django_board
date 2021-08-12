@@ -9,33 +9,6 @@ from .models import *
 from snowpenguin.django.recaptcha2.fields import ReCaptchaField
 from snowpenguin.django.recaptcha2.widgets import ReCaptchaWidget
 from PIL import Image
-# from django.core.files import File
-
-# class AvatarForm(forms.ModelForm):
-#     x = forms.FloatField(widget=forms.HiddenInput())
-#     y = forms.FloatField(widget=forms.HiddenInput())
-#     width = forms.FloatField(widget=forms.HiddenInput())
-#     height = forms.FloatField(widget=forms.HiddenInput())
-
-#     class Meta:
-#         model = Avatar
-#         fields = ('file', 'x', 'y', 'width', 'height', )
-
-
-#     def save(self):
-#         avatar = super(AvatarForm, self).save()
-
-#         x = self.cleaned_data.get('x')
-#         y = self.cleaned_data.get('y')
-#         w = self.cleaned_data.get('width')
-#         h = self.cleaned_data.get('height')
-
-#         image = Image.open(avatar.file)
-#         cropped_image = image.crop((x, y, w+x, h+y))
-#         resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
-#         resized_image.save(avatar.file.path)
-
-#         return avatar
 
 
 class SignUpFormReader(forms.ModelForm):
@@ -166,6 +139,7 @@ class SignUpFormBloger(forms.ModelForm):
 
 
 class BlogerForm(forms.ModelForm):
+
     birthday = forms.DateField(required=False, widget = DateInput())
     category = forms.ModelMultipleChoiceField(
                                                 queryset=Category.objects.all(),
@@ -178,9 +152,9 @@ class BlogerForm(forms.ModelForm):
     height = forms.FloatField(widget=forms.HiddenInput(),required=False)
 
 
-
         
     class Meta:
+        
         model = Bloger
         fields = ['file', 'x', 'y', 'width', 'height','username','email', 'birthday', 'country','category']
         exclude = ('user','bloger','is_super',)

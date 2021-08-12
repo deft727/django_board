@@ -26,9 +26,28 @@ $(function () {
     done: function (e, data) {
       if (data.result.is_valid) {
         $("#gallery tbody").prepend(
-          "<tr><td><a href='" + data.result.url + "'>" + data.result.name + "</a></td></tr>"
+          `<tr>
+            <td> 
+
+              <img src="${data.result.url}"  style="with:35px" /> 
+                <a href="" class="my-selector" >${data.result.name}
+          <button type="submit" class="close my-selector" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                        </a>
+            </td>
+          </tr>`
         )
       }
     }
+  });
+});
+
+
+$(function(){
+  $('.my-selector').click(function(){
+    $(this).addClass('js-hidden');
+    $(this).removeClass('js-hidden');
+    $(this).toggleClass('js-hidden');
   });
 });
