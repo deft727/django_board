@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     'simple_history',
     'django.contrib.sites',
     'django.contrib.flatpages',
-    'social_django',
+    # 'social_django',
 
 ]
 

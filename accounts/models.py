@@ -74,4 +74,4 @@ class Reader(models.Model):
     username = models.CharField(blank=True, null=True,  max_length=50,  verbose_name='имя')
     is_super = models.BooleanField(default=False)
     of_age = models.BooleanField(default=False,null=True,blank=True)
-    interests = models.ManyToManyField(Interests,verbose_name='Интересы', blank=True)
+    interests = models.ManyToManyField(Interests,verbose_name='Интересы',null=True, blank=True)
