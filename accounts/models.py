@@ -49,7 +49,7 @@ class Bloger(models.Model):
         (STATUS_FALSE,'isn`t bloger'),
     )
     file = models.ImageField(null=True,blank=True,upload_to='avatar/')
-    category = models.ManyToManyField(Category,verbose_name='Категории')
+    category = models.ManyToManyField(Category,verbose_name='Категории',null=True)
     user = models.ForeignKey(User, verbose_name='блогер', on_delete=models.CASCADE,related_name='bloger')
     username = models.CharField(blank=True, null=True, default=None, max_length=255,  verbose_name='имя')
     email = models .EmailField(verbose_name='Электороная почта',null=True)

@@ -216,8 +216,9 @@ class ReaderForm(forms.ModelForm):
 
 
 class LoginForm(forms.ModelForm):
+
     password = forms.CharField(widget=forms.PasswordInput)
-    captcha = ReCaptchaField(widget=ReCaptchaWidget())
+    # captcha = ReCaptchaField(widget=ReCaptchaWidget())
 
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -225,6 +226,10 @@ class LoginForm(forms.ModelForm):
         self.fields['password'].label = 'Пароль'
         
     def clean(self):
+        try :
+            self.cleaned_data['password'] and self.cleaned_data['username']
+        except:
+            raise forms.ValidationError('Введите имя и пароль')
         username= self.cleaned_data['username']
         password= self.cleaned_data['password']
 
@@ -248,7 +253,8 @@ class LoginForm(forms.ModelForm):
 
     class Meta:
         model=User
-        fields= ['username','password','captcha']
+        fields= ['username','password',]
+        # 'captcha'
 
 
 

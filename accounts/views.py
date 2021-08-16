@@ -43,9 +43,6 @@ class UserUpdateView(UpdateView):
         messages.add_message(self.request,messages.SUCCESS,'account has been updated')
         return super().form_valid(form)
 
-    def form_invalid(self, form):
-        print('jiijij')
-        return super().form_invalid(form)
 
 
 class ChooseSignup(View):
@@ -85,6 +82,7 @@ class RegistrationViewReader(View):
                 auth_login(request, new_user,  backend='django.contrib.auth.backends.ModelBackend')
                 name  = form.cleaned_data['username'] if form.cleaned_data['username'] else 'Anonimous'
                 send_user_mail_task.delay(subject='Hello Reader',content=f'Welcome on our site {name}',email=new_user.email)
+                return redirect('home')
         else:
             form = SignUpFormReader()
         return render(request, 'signup.html', {'form': form})
